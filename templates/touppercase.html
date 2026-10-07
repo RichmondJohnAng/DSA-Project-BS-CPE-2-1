@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}To Uppercase{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Convert String to Uppercase</h1>
+    <p>Enter text to be converted.</p>
+
+    <form action="/works" method="post">
+        <div class="form-group">
+            <label for="inputString">Enter text:</label>
+            <input type="text" id="inputString" name="inputString" required placeholder="Enter your text...">
+        </div>
+        <button type="submit">Convert</button>
+    </form>
+
+    {% if result %}
+    <div class="result-card">
+        <label>Converted Output:</label>
+        <div class="result-value">{{ result }}</div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

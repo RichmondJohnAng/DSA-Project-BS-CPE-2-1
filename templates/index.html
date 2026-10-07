@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Welcome to Renz's Website</h1>
+</div>
+
+<div class="card">
+    <h2>Works</h2>
+
+    <div class="grid-links">
+        <a href="/works" class="grid-link-item">
+            <div class="grid-link-title">
+                <span>Capitalize Letters</span>
+                <span>&rarr;</span>
+            </div>
+            <p class="grid-link-desc">Convert lower case letters to uppercase.</p>
+        </a>
+
+        <a href="/works/area/circle" class="grid-link-item">
+            <div class="grid-link-title">
+                <span>Area of a Circle</span>
+                <span>&rarr;</span>
+            </div>
+            <p class="grid-link-desc">Calculate area of circle.</p>
+        </a>
+
+        <a href="/works/area/triangle" class="grid-link-item">
+            <div class="grid-link-title">
+                <span>Area of a Triangle</span>
+                <span>&rarr;</span>
+            </div>
+            <p class="grid-link-desc">Calculate area of triangle.</p>
+        </a>
+
+        <a href="/works/linkedlist" class="grid-link-item">
+            <div class="grid-link-title">
+                <span>Linked List</span>
+                <span>&rarr;</span>
+            </div>
+            <p class="grid-link-desc">Live linked list edit and display.</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

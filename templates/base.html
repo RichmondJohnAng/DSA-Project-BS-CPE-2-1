@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Flask Portfolio{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header class="navbar">
+        <div class="nav-container">
+            <nav>
+                <ul class="nav-links">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/profile" class="nav-link {% if request.path == '/profile' %}active{% endif %}">Profile</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="/works" class="nav-link {% if request.path.startswith('/works') %}active{% endif %}">
+                            Works &#9662;
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/works" class="dropdown-item">Capitalize Letters</a></li>
+                            <li><a href="/works/area/circle" class="dropdown-item">Area of Circle</a></li>
+                            <li><a href="/works/area/triangle" class="dropdown-item">Area of Triangle</a></li>
+                            <li><a href="/works/linkedlist" class="dropdown-item">Linked List</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/contact" class="nav-link {% if request.path == '/contact' %}active{% endif %}">Contact</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-wrapper">
+        <div class="content-container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

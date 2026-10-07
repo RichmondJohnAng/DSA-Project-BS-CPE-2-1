@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Area of Circle{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Area of a Circle</h1>
+    <p>Calculate the area of a circle</p>
+
+    <form action="/works/area/circle" method="post">
+        <div class="form-group">
+            <label for="radius">Radius (r):</label>
+            <input type="number" step="any" id="radius" name="radius" required placeholder="Enter circle radius">
+        </div>
+        <button type="submit">Compute Area</button>
+    </form>
+
+    {% if result is not none %}
+    <div class="result-card">
+        <label>Computed Area:</label>
+        <div class="result-value">{{ result }}</div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

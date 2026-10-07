@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Linked List - DevPortfolio{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Linked List Interactive Demo</h1>
+
+    {% if message %}
+        <div class="alert {% if 'not found' in message or 'empty' in message or 'Please' in message %}alert-error{% else %}alert-success{% endif %}">
+            <span>&#9432;</span>
+            <span>{{ message }}</span>
+        </div>
+    {% endif %}
+
+    <h2>Current Linked List Visualization</h2>
+    <div class="visualizer-container">
+        {% if items %}
+            {% for item in items %}
+                <span class="node">{{ item }}</span>
+                <span class="arrow">&rarr;</span>
+            {% endfor %}
+            <span class="node node-null">NULL</span>
+        {% else %}
+            <p style="margin: 0; color: var(--text-muted);"><em>List is currently empty (Head &rarr; NULL). Add nodes using the forms below.</em></p>
+        {% endif %}
+    </div>
+    {% if items %}
+        <p style="font-size: 0.9rem; color: var(--text-muted);">Total Elements: {{ items|length }}</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>Linked List Operations</h2>
+
+    <div class="operations-grid">
+        <div class="op-card">
+            <div>
+                <h3>1. Insert at Beginning</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Inserts node at the head.</p>
+            </div>
+            <form action="/works/linkedlist" method="post">
+                <input type="hidden" name="action" value="insert_at_beginning">
+                <input type="text" name="data" required placeholder="Node value">
+                <button type="submit">Insert Head</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>2. Insert at End</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Appends node at the tail.</p>
+            </div>
+            <form action="/works/linkedlist" method="post">
+                <input type="hidden" name="action" value="insert_at_end">
+                <input type="text" name="data" required placeholder="Node value">
+                <button type="submit">Insert Tail</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>3. Insert After</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Inserts a node following a target value.</p>
+            </div>
+            <form action="/works/linkedlist" method="post">
+                <input type="hidden" name="action" value="insert_after">
+                <input type="text" name="target" required placeholder="Existing target value">
+                <input type="text" name="data" required placeholder="New node value">
+                <button type="submit">Insert After Target</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>4. Remove at Beginning</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Deletes the current head node.</p>
+            </div>
+            <form action="/works/linkedlist" method="post">
+                <input type="hidden" name="action" value="remove_at_beginning">
+                <button type="submit" class="btn-danger">Remove Head</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>5. Remove at End</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Deletes the current tail node.</p>
+            </div>
+            <form action="/works/linkedlist" method="post">
+                <input type="hidden" name="action" value="remove_at_end">
+                <button type="submit" class="btn-danger">Remove Tail</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>6. Remove Target</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Searches and deletes the first match.</p>
+            </div>
+            <form action="/works/linkedlist" method="post">
+                <input type="hidden" name="action" value="remove_target">
+                <input type="text" name="target" required placeholder="Target value to delete">
+                <button type="submit" class="btn-danger">Delete Target</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

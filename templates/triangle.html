@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Area of Triangle{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Area of a Triangle</h1>
+    <p>Calculate the area of a triangle.</p>
+
+    <form action="/works/area/triangle" method="post">
+        <div class="form-group">
+            <label for="base">Base (b):</label>
+            <input type="number" step="any" id="base" name="base" required placeholder="Enter base value">
+        </div>
+        <div class="form-group">
+            <label for="height">Height (h):</label>
+            <input type="number" step="any" id="height" name="height" required placeholder="Enter height value">
+        </div>
+        <button type="submit">Compute Area</button>
+    </form>
+
+    {% if result is not none %}
+    <div class="result-card">
+        <label>Computed Area:</label>
+        <div class="result-value">{{ result }}</div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
