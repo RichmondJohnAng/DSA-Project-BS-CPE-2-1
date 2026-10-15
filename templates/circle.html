@@ -5,12 +5,19 @@
 {% block content %}
 <div class="card">
     <h1>Area of a Circle</h1>
-    <p>Calculate the area of a circle</p>
+    <p>Calculate the area of a circle.</p>
+
+    {% if error %}
+    <div class="alert alert-error">
+        <span>&#9888;</span>
+        <span>{{ error }}</span>
+    </div>
+    {% endif %}
 
     <form action="/works/area/circle" method="post">
         <div class="form-group">
             <label for="radius">Radius (r):</label>
-            <input type="number" step="any" id="radius" name="radius" required placeholder="Enter circle radius">
+            <input type="number" step="any" min="0.0001" id="radius" name="radius" value="{{ radius or '' }}" required placeholder="Enter positive circle radius">
         </div>
         <button type="submit">Compute Area</button>
     </form>

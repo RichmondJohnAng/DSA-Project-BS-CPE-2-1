@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Infix to Postfix Converter - DevPortfolio{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Infix to Postfix Converter</h1>
+    <p>Convert <strong>Infix</strong> expressions into <strong>Postfix</strong> notation using a <strong>Stack</strong>.
+    </p>
+
+    {% if error %}
+    <div class="alert alert-error">
+        <span>&#9888;</span>
+        <span>{{ error }}</span>
+    </div>
+    {% endif %}
+
+    <form action="/works/infix-postfix" method="post" id="converterForm">
+        <div class="form-group">
+            <label for="expression">Enter Infix Expression:</label>
+            <input type="text" id="expression" name="expression" value="{{ expression or '' }}"
+                placeholder="e.g. (A + B) * (C - D) or (3 + 4) * 2 / 2" required autocomplete="off">
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+            <span style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">Quick
+                Examples:</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                <button type="button" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.82rem;"
+                    onclick="setExpr('A + B * C')">A + B * C</button>
+                <button type="button" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.82rem;"
+                    onclick="setExpr('(A + B) * (C - D)')">(A + B) * (C - D)</button>
+                <button type="button" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.82rem;"
+                    onclick="setExpr('A + B * (C ^ D - E)')">A + B * (C ^ D - E)</button>
+                <button type="button" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.82rem;"
+                    onclick="setExpr('(3 + 4) * 2 / 2')">(3 + 4) * 2 / 2</button>
+            </div>
+        </div>
+
+        <button type="submit">Convert to Postfix &rarr;</button>
+    </form>
+</div>
+
+{% if postfix %}
+<div class="card">
+    <h2>Result</h2>
+
+    <div
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1rem;">
+        <div class="result-card" style="margin-top: 0;">
+            <span
+                style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Infix
+                Notation</span>
+            <div class="result-value" style="font-family: 'Courier New', monospace; font-size: 1.3rem;">{{ expression }}
+            </div>
+        </div>
+
+        <div class="result-card" style="margin-top: 0;">
+            <span
+                style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Postfix
+                Notation</span>
+            <div class="result-value" style="font-family: 'Courier New', monospace; font-size: 1.3rem;">{{ postfix }}
+            </div>
+        </div>
+
+        {% if eval_result is not none %}
+        <div class="result-card" style="margin-top: 0;">
+            <span
+                style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Evaluated
+                Numeric Value</span>
+            <div class="result-value" style="font-size: 1.3rem;">{{ eval_result }}</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<script>
+    function setExpr(val) {
+        const input = document.getElementById('expression');
+        input.value = val;
+        input.focus();
+    }
+</script>
+{% endblock %}

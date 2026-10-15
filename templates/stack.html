@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Stack - DevPortfolio{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Stack Interactive Demo (LIFO)</h1>
+    <p>A <strong>Stack</strong> is a linear data structure that follows the <strong>Last In, First Out (LIFO)</strong>
+        principle. The last element added is the first one to be removed.</p>
+
+    {% if message %}
+    <div
+        class="alert {% if 'empty' in message or 'underflow' in message or 'Please' in message %}alert-error{% else %}alert-success{% endif %}">
+        <span>&#9432;</span>
+        <span>{{ message }}</span>
+    </div>
+    {% endif %}
+
+    <h2>Stack Visualization</h2>
+    <div class="stack-visualizer-container">
+        {% if items %}
+        <div class="stack-box-column">
+            {% for item in items %}
+            <div class="stack-item {% if loop.first %}stack-top-item{% endif %}">
+                <span class="stack-item-val">{{ item }}</span>
+                {% if loop.first %}
+                <span class="stack-badge top-badge">&larr; TOP</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <div class="stack-base">=== STACK BASE ===</div>
+        </div>
+        {% else %}
+        <div class="stack-empty">
+            <p><em>Stack is currently empty. Use the operations below to push elements.</em></p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="stack-status-bar">
+        <div class="status-chip">
+            <span class="status-label">Size:</span>
+            <span class="status-val">{{ stack_size }}</span>
+        </div>
+        <div class="status-chip">
+            <span class="status-label">Top Element:</span>
+            <span class="status-val">{% if items %}{{ items[0] }}{% else %}None{% endif %}</span>
+        </div>
+        <div class="status-chip">
+            <span class="status-label">Status:</span>
+            <span class="status-val">{% if items %}Active{% else %}Empty{% endif %}</span>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Stack Operations</h2>
+
+    <div class="operations-grid">
+        <div class="op-card">
+            <div>
+                <h3>1. Push</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Pushes a new node onto the top of the stack.
+                </p>
+            </div>
+            <form action="/works/stack" method="post">
+                <input type="hidden" name="action" value="push">
+                <input type="text" name="data" required placeholder="Element value (e.g. 10, A)">
+                <button type="submit">Push</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>2. Pop</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Removes and returns the top element (LIFO).</p>
+            </div>
+            <form action="/works/stack" method="post">
+                <input type="hidden" name="action" value="pop">
+                <button type="submit" class="btn-danger">Pop</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>3. Peek</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Inspects the top element without removing it.
+                </p>
+            </div>
+            <form action="/works/stack" method="post">
+                <input type="hidden" name="action" value="peek">
+                <button type="submit" class="btn-secondary">Peek Top</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>4. Clear</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Empties all elements from the stack.</p>
+            </div>
+            <form action="/works/stack" method="post">
+                <input type="hidden" name="action" value="clear">
+                <button type="submit" class="btn-danger">Clear Stack</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

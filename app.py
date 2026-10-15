@@ -1,106 +1,13 @@
 from flask import Flask, render_template, request
+from linkedlist import LinkedList
+from stack import Stack
+from infix_postfix import InfixPostfix
 
 app = Flask(__name__)
 
-class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
-
-    def __repr__(self):
-        return f"Node({self.data})"
-
-
-class LinkedList:
-    def __init__(self):
-        self.head = None
-
-    def insert_at_beginning(self, data):
-        new_node = Node(data)
-        new_node.next = self.head
-        self.head = new_node
-
-    def insert_at_end(self, data):
-        new_node = Node(data)
-        if not self.head:
-            self.head = new_node
-            return
-        curr = self.head
-        while curr.next:
-            curr = curr.next
-        curr.next = new_node
-
-    def insert_after(self, target, data):
-        target_val = target.data if isinstance(target, Node) else target
-        curr = self.head
-        while curr:
-            if curr == target or curr.data == target_val or str(curr.data) == str(target_val):
-                new_node = Node(data)
-                new_node.next = curr.next
-                curr.next = new_node
-                return True
-            curr = curr.next
-        return False
-
-    def remove_at_beginning(self):
-        if not self.head:
-            return None
-        removed_data = self.head.data
-        self.head = self.head.next
-        return removed_data
-
-    def remove_at_end(self):
-        if not self.head:
-            return None
-        if not self.head.next:
-            removed_data = self.head.data
-            self.head = None
-            return removed_data
-        curr = self.head
-        while curr.next.next:
-            curr = curr.next
-        removed_data = curr.next.data
-        curr.next = None
-        return removed_data
-
-    def remove_target(self, target):
-        if not self.head:
-            return False
-
-        target_val = target.data if isinstance(target, Node) else target
-
-        if self.head == target or self.head.data == target_val or str(self.head.data) == str(target_val):
-            self.head = self.head.next
-            return True
-
-        curr = self.head
-        while curr.next:
-            if curr.next == target or curr.next.data == target_val or str(curr.next.data) == str(target_val):
-                curr.next = curr.next.next
-                return True
-            curr = curr.next
-        return False
-
-    def to_list(self):
-        elements = []
-        curr = self.head
-        while curr:
-            elements.append(curr.data)
-            curr = curr.next
-        return elements
-
-    def __iter__(self):
-        curr = self.head
-        while curr:
-            yield curr.data
-            curr = curr.next
-
-    def __repr__(self):
-        nodes = self.to_list()
-        return " -> ".join(map(str, nodes)) if nodes else "Empty List"
-
-
 linked_list = LinkedList()
+stack = Stack()
+infix_postfix = InfixPostfix()
 
 def area_of_triangle(base, height):
     return 0.5 * float(base) * float(height)
@@ -116,33 +23,62 @@ def profile():
 @app.route('/works', methods=['GET', 'POST'])
 def works():
     result = None
+    error = None
+    input_string = ''
     if request.method == 'POST':
         input_string = request.form.get('inputString', '')
-        result = input_string.upper()
-    return render_template('touppercase.html', result=result)
+        if not input_string.strip():
+            error = "Please enter some text."
+        elif not all(c.isalpha() or c.isspace() for c in input_string):
+            error = "Invalid input: Numbers and special characters are not accepted. Only letters (A-Z, a-z) are allowed."
+        else:
+            result = input_string.upper()
+    return render_template('touppercase.html', result=result, error=error, input_string=input_string)
 
 @app.route('/works/area/circle', methods=['GET', 'POST'])
 def acircle():
     result = None
+    error = None
+    radius = ''
     if request.method == 'POST':
-        radius = request.form.get('radius', '')
-        try:
-            result = float(radius) * 3.14 * float(radius)
-        except (ValueError, TypeError):
-            result = "Invalid input"
-    return render_template('circle.html', result=result)
+        radius = request.form.get('radius', '').strip()
+        if not radius:
+            error = "Please enter a radius value."
+        else:
+            try:
+                r = float(radius)
+                if r <= 0:
+                    error = "Invalid input: Radius must be a positive number greater than 0."
+                else:
+                    area = 3.141592653589793 * (r ** 2)
+                    result = round(area, 4) if not area.is_integer() else int(area)
+            except (ValueError, TypeError):
+                error = "Invalid input: Letters and special characters are not accepted. Please enter a valid number."
+    return render_template('circle.html', result=result, error=error, radius=radius)
 
 @app.route('/works/area/triangle', methods=['GET', 'POST'])
 def atriangle():
     result = None
+    error = None
+    base = ''
+    height = ''
     if request.method == 'POST':
-        base = request.form.get('base', '')
-        height = request.form.get('height', '')
-        try:
-            result = area_of_triangle(base, height)
-        except (ValueError, TypeError):
-            result = "Invalid input: Please enter valid numbers."
-    return render_template('triangle.html', result=result)
+        base = request.form.get('base', '').strip()
+        height = request.form.get('height', '').strip()
+        if not base or not height:
+            error = "Please enter both base and height values."
+        else:
+            try:
+                b = float(base)
+                h = float(height)
+                if b <= 0 or h <= 0:
+                    error = "Invalid input: Base and height must be positive numbers greater than 0."
+                else:
+                    area = area_of_triangle(b, h)
+                    result = round(area, 4) if not area.is_integer() else int(area)
+            except (ValueError, TypeError):
+                error = "Invalid input: Letters and special characters are not accepted. Please enter valid numbers."
+    return render_template('triangle.html', result=result, error=error, base=base, height=height)
 
 @app.route('/works/linkedlist', methods=['GET', 'POST'])
 def works_linkedlist():
@@ -199,6 +135,64 @@ def works_linkedlist():
                 message = "Please provide target value to remove."
 
     return render_template('linkedlist.html', items=linked_list.to_list(), message=message)
+
+@app.route('/works/stack', methods=['GET', 'POST'])
+def works_stack():
+    message = None
+    if request.method == 'POST':
+        action = request.form.get('action')
+        data = request.form.get('data')
+
+        if action == 'push':
+            if data:
+                stack.push(data)
+                message = f"Pushed '{data}' onto the stack."
+            else:
+                message = "Please provide a value to push."
+
+        elif action == 'pop':
+            popped = stack.pop()
+            if popped is not None:
+                message = f"Popped '{popped}' from the top of the stack."
+            else:
+                message = "Stack Underflow: Stack is empty, nothing to pop."
+
+        elif action == 'peek':
+            top_val = stack.peek()
+            if top_val is not None:
+                message = f"Top element is '{top_val}'."
+            else:
+                message = "Stack is empty, no top element to peek."
+
+        elif action == 'clear':
+            stack.clear()
+            message = "Stack has been cleared."
+
+    return render_template('stack.html', items=stack.to_list(), message=message, stack_size=stack.size())
+
+@app.route('/works/infix-postfix', methods=['GET', 'POST'])
+def works_infix_postfix():
+    expression = ''
+    postfix = None
+    eval_result = None
+    error = None
+
+    if request.method == 'POST':
+        expression = request.form.get('expression', '').strip()
+        if expression:
+            postfix, error = infix_postfix.convert(expression)
+            if postfix:
+                eval_result = infix_postfix.evaluate(postfix)
+        else:
+            error = 'Please enter an infix expression.'
+
+    return render_template(
+        'infix_postfix.html',
+        expression=expression,
+        postfix=postfix,
+        eval_result=eval_result,
+        error=error
+    )
 
 @app.route('/contact')
 def contact():

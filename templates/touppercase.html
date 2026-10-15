@@ -5,12 +5,19 @@
 {% block content %}
 <div class="card">
     <h1>Convert String to Uppercase</h1>
-    <p>Enter text to be converted.</p>
+    <p>Enter text containing letters only.</p>
+
+    {% if error %}
+    <div class="alert alert-error">
+        <span>&#9888;</span>
+        <span>{{ error }}</span>
+    </div>
+    {% endif %}
 
     <form action="/works" method="post">
         <div class="form-group">
             <label for="inputString">Enter text:</label>
-            <input type="text" id="inputString" name="inputString" required placeholder="Enter your text...">
+            <input type="text" id="inputString" name="inputString" value="{{ input_string or '' }}" required placeholder="Enter letters only (e.g. Hello World)" pattern="[A-Za-z\s]+" title="Only alphabetic letters and spaces are allowed">
         </div>
         <button type="submit">Convert</button>
     </form>

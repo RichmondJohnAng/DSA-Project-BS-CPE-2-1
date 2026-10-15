@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Flask Portfolio{% endblock %}</title>
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block head %}{% endblock %}
 </head>
@@ -27,10 +33,17 @@
                             <li><a href="/works/area/circle" class="dropdown-item">Area of Circle</a></li>
                             <li><a href="/works/area/triangle" class="dropdown-item">Area of Triangle</a></li>
                             <li><a href="/works/linkedlist" class="dropdown-item">Linked List</a></li>
+                            <li><a href="/works/stack" class="dropdown-item">Stack</a></li>
+                            <li><a href="/works/infix-postfix" class="dropdown-item">Infix to Postfix</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
                         <a href="/contact" class="nav-link {% if request.path == '/contact' %}active{% endif %}">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle dark/light mode">
+                            <span id="themeLabel">Light</span>
+                        </button>
                     </li>
                 </ul>
             </nav>
@@ -44,5 +57,30 @@
     </main>
 
     {% block scripts %}{% endblock %}
+
+    <script>
+        const toggleBtn = document.getElementById('themeToggle');
+        const themeLabel = document.getElementById('themeLabel');
+
+        function syncThemeUI(theme) {
+            if (theme === 'light') {
+                themeLabel.textContent = 'Dark';
+            } else {
+                themeLabel.textContent = 'Light';
+            }
+        }
+
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+        syncThemeUI(currentTheme);
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function() {
+                const nextTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', nextTheme);
+                localStorage.setItem('theme', nextTheme);
+                syncThemeUI(nextTheme);
+            });
+        }
+    </script>
 </body>
 </html>

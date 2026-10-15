@@ -7,14 +7,21 @@
     <h1>Area of a Triangle</h1>
     <p>Calculate the area of a triangle.</p>
 
+    {% if error %}
+    <div class="alert alert-error">
+        <span>&#9888;</span>
+        <span>{{ error }}</span>
+    </div>
+    {% endif %}
+
     <form action="/works/area/triangle" method="post">
         <div class="form-group">
             <label for="base">Base (b):</label>
-            <input type="number" step="any" id="base" name="base" required placeholder="Enter base value">
+            <input type="number" step="any" min="0.0001" id="base" name="base" value="{{ base or '' }}" required placeholder="Enter positive base value">
         </div>
         <div class="form-group">
             <label for="height">Height (h):</label>
-            <input type="number" step="any" id="height" name="height" required placeholder="Enter height value">
+            <input type="number" step="any" min="0.0001" id="height" name="height" value="{{ height or '' }}" required placeholder="Enter positive height value">
         </div>
         <button type="submit">Compute Area</button>
     </form>
