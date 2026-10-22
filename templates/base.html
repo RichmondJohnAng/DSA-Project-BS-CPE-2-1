@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Flask Portfolio{% endblock %}</title>
+    <title>{% block title %}DSA Projects - Richmond John Ang{% endblock %}</title>
     <script>
-        (function() {
+        (function () {
             const savedTheme = localStorage.getItem('theme') || 'dark';
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
@@ -13,48 +13,131 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block head %}{% endblock %}
 </head>
+
 <body>
-    <header class="navbar">
-        <div class="nav-container">
-            <nav>
-                <ul class="nav-links">
-                    <li class="nav-item">
-                        <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/profile" class="nav-link {% if request.path == '/profile' %}active{% endif %}">Profile</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a href="/works" class="nav-link {% if request.path.startswith('/works') %}active{% endif %}">
-                            Works &#9662;
+    {% block splash %}
+    <div id="introSplash" class="intro-splash-overlay" style="display: none;" role="dialog" aria-modal="true"
+        aria-label="Welcome Splash Screen">
+        <div class="intro-splash-card">
+            <h1>Richmond John Ang</h1>
+            <div class="intro-splash-divider"></div>
+            <h2>Polytechnic University of the Philippines - BS CpE 2-1</h2>
+        </div>
+    </div>
+    <script>
+        (function () {
+            const alreadyShown = sessionStorage.getItem('splashShown');
+            const splash = document.getElementById('introSplash');
+            if (!alreadyShown && splash) {
+                splash.style.display = 'flex';
+                document.body.classList.add('splash-active');
+                sessionStorage.setItem('splashShown', 'true');
+                setTimeout(function () {
+                    splash.classList.add('fade-out');
+                    document.body.classList.remove('splash-active');
+                    setTimeout(function () {
+                        splash.style.display = 'none';
+                    }, 400);
+                }, 2000);
+            }
+        })();
+    </script>
+    {% endblock %}
+
+    <div class="app-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="/profile" class="sidebar-brand {% if request.path == '/profile' %}active{% endif %}"
+                    title="Profile">
+                    <div class="sidebar-avatar">
+                        <span class="sidebar-avatar-box">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                        </span>
+                    </div>
+                    <span class="brand-title">Profile</span>
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">Menu</div>
+                <ul class="sidebar-links">
+                    <li>
+                        <a href="/" class="sidebar-link {% if request.path == '/' %}active{% endif %}" title="Home">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                                    <polyline points="9 22 9 12 15 12 15 22" />
+                                </svg>
+                            </span>
+                            <span class="nav-text">Home</span>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/works" class="dropdown-item">Capitalize Letters</a></li>
-                            <li><a href="/works/area/circle" class="dropdown-item">Area of Circle</a></li>
-                            <li><a href="/works/area/triangle" class="dropdown-item">Area of Triangle</a></li>
-                            <li><a href="/works/linkedlist" class="dropdown-item">Linked List</a></li>
-                            <li><a href="/works/stack" class="dropdown-item">Stack</a></li>
-                            <li><a href="/works/infix-postfix" class="dropdown-item">Infix to Postfix</a></li>
-                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a href="/contact" class="nav-link {% if request.path == '/contact' %}active{% endif %}">Contact</a>
+                    <li>
+                        <a href="/projects"
+                            class="sidebar-link {% if request.path == '/projects' or request.path.startswith('/works') %}active{% endif %}"
+                            title="Projects">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="7" height="7" x="3" y="3" rx="1" />
+                                    <rect width="7" height="7" x="14" y="3" rx="1" />
+                                    <rect width="7" height="7" x="14" y="14" rx="1" />
+                                    <rect width="7" height="7" x="3" y="14" rx="1" />
+                                </svg>
+                            </span>
+                            <span class="nav-text">Projects</span>
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle dark/light mode">
-                            <span id="themeLabel">Light</span>
-                        </button>
+                    <li>
+                        <a href="/contact" class="sidebar-link {% if request.path == '/contact' %}active{% endif %}"
+                            title="Contact">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                                </svg>
+                            </span>
+                            <span class="nav-text">Contact</span>
+                        </a>
                     </li>
                 </ul>
             </nav>
-        </div>
-    </header>
 
-    <main class="main-wrapper">
-        <div class="content-container">
-            {% block content %}{% endblock %}
+            <div class="sidebar-footer">
+                <button type="button" id="themeToggle" class="sidebar-theme-toggle" aria-label="Toggle dark/light mode">
+                    <span class="theme-mode-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="4" />
+                            <path d="M12 2v2" />
+                            <path d="M12 20v2" />
+                            <path d="m4.93 4.93 1.41 1.41" />
+                            <path d="m17.66 17.66 1.41 1.41" />
+                            <path d="M2 12h2" />
+                            <path d="M20 12h2" />
+                            <path d="m6.34 17.66-1.41 1.41" />
+                            <path d="m19.07 4.93-1.41 1.41" />
+                        </svg>
+                    </span>
+                    <span id="themeLabel">Light Mode</span>
+                </button>
+            </div>
+        </aside>
+
+        <div class="main-content-area">
+            <main class="main-wrapper">
+                <div class="content-container">
+                    {% block content %}{% endblock %}
+                </div>
+            </main>
         </div>
-    </main>
+    </div>
 
     {% block scripts %}{% endblock %}
 
@@ -64,9 +147,9 @@
 
         function syncThemeUI(theme) {
             if (theme === 'light') {
-                themeLabel.textContent = 'Dark';
+                themeLabel.textContent = 'Dark Mode';
             } else {
-                themeLabel.textContent = 'Light';
+                themeLabel.textContent = 'Light Mode';
             }
         }
 
@@ -74,7 +157,7 @@
         syncThemeUI(currentTheme);
 
         if (toggleBtn) {
-            toggleBtn.addEventListener('click', function() {
+            toggleBtn.addEventListener('click', function () {
                 const nextTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
                 document.documentElement.setAttribute('data-theme', nextTheme);
                 localStorage.setItem('theme', nextTheme);
@@ -83,4 +166,5 @@
         }
     </script>
 </body>
+
 </html>

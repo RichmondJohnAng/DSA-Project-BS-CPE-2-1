@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Projects{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Projects</h1>
+    <p style="color: var(--text-secondary); margin-top: 0.5rem;">
+        Data Structures and Algorithms course projects.
+    </p>
+</div>
+
+<div class="card">
+    <div class="grid-links">
+        <a href="/works" class="grid-link-item">
+            <div class="grid-link-title">
+                <span>Capitalize Letters</span>
+                <span>&rarr;</span>
+            </div>
+            <p class="grid-link-desc">Convert lower case letters to uppercase.</p>
+        </a>
+
+        <a href="/works/area/circle" class="grid-link-item">
+            <div class="grid-link-title">
+                <span>Area of a Circle</span>
+                <span>&rarr;</span>
+            </div>
+            <p class="grid-link-desc">Calculate area of circle.</p>
+        </a>
+
+        <a href="/works/area/triangle" class="grid-link-item">
+            <div class="grid-link-title">
+                <span>Area of a Triangle</span>
+                <span>&rarr;</span>
+            </div>
+            <p class="grid-link-desc">Calculate area of triangle.</p>
+        </a>
+
+        <a href="/works/linkedlist" class="grid-link-item">
+            <div class="grid-link-title">
+                <span>Linked List</span>
+                <span>&rarr;</span>
+            </div>
+            <p class="grid-link-desc">Live linked list edit and display.</p>
+        </a>
+
+        <a href="/works/stack" class="grid-link-item">
+            <div class="grid-link-title">
+                <span>Stack</span>
+                <span>&rarr;</span>
+            </div>
+            <p class="grid-link-desc">Live stack push, pop, and peek display.</p>
+        </a>
+
+        <a href="/works/infix-postfix" class="grid-link-item">
+            <div class="grid-link-title">
+                <span>Infix to Postfix</span>
+                <span>&rarr;</span>
+            </div>
+            <p class="grid-link-desc">Convert and trace expressions using stack.</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

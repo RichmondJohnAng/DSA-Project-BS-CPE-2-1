@@ -1,22 +1,46 @@
 {% extends "base.html" %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}Profile - Richmond John Ang{% endblock %}
 
 {% block content %}
 <div class="card">
-    <h1>Profile</h1>
+    <div class="profile-header-card">
+        <div class="profile-avatar-section">
+            <div class="profile-avatar-circle">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+            </div>
+            <button type="button" class="btn-secondary profile-edit-btn" aria-label="Edit Profile Photo">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                <span>Edit Profile Photo</span>
+            </button>
+        </div>
+        <div class="profile-header-details">
+            <h1>Richmond John Ang</h1>
+            <p style="color: var(--text-secondary); margin-top: 0.25rem;">
+                Bachelor of Science in Computer Engineering &middot; BS CpE 2-1
+            </p>
+            <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 0.25rem;">
+                Polytechnic University of the Philippines &middot; Manila
+            </p>
+        </div>
+    </div>
+</div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+<div class="card">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
         <div style="background-color: var(--bg-input); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
             <h3 style="margin-bottom: 0.75rem;">User Information</h3>
             <p><strong>Name:</strong> Richmond John Ang</p>
             <p><strong>Course:</strong> Bachelor of Science in Computer Engineering</p>
             <p><strong>Section:</strong> BS CPE 2-1</p>
-            <p><strong>Course:</strong> Data Structures and Algorithms</p>
+            <p><strong>Subject:</strong> Data Structures and Algorithms</p>
         </div>
 
         <div style="background-color: var(--bg-input); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
-            <h3 style="margin-bottom: 0.75rem;">Motto in Life
+            <h3 style="margin-bottom: 0.75rem;">Motto in Life</h3>
             <blockquote style="border-left: 3px solid var(--accent); padding-left: 1rem; color: var(--text-secondary); font-style: italic; margin-top: 0.5rem;">
                 "Quit. Don't quit. Noodles. Don't noodles. You are too concerned with what was and what will be. There's a saying. Yesterday is history, Tomorrow is a mystery, but Today is a gift that's why it is called the Present."
             </blockquote>
