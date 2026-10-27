@@ -1,0 +1,309 @@
+{% extends "base.html" %}
+
+{% block title %}Queue & Deque{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Queue &amp; Deque Interactive Demo</h1>
+    <p>
+        Implementation of <strong>Queue</strong> and <strong>Deque</strong>.
+    </p>
+
+    <div class="queue-tabs">
+        <a href="?tab=queue" class="queue-tab-btn {% if active_tab == 'queue' %}active{% endif %}">
+            Queue
+        </a>
+        <a href="?tab=deque" class="queue-tab-btn {% if active_tab == 'deque' %}active{% endif %}">
+            Dequeue
+        </a>
+    </div>
+
+    {% if message %}
+    <div
+        class="alert {% if 'empty' in message or 'Underflow' in message or 'Please' in message %}alert-error{% else %}alert-success{% endif %}">
+        <span class="alert-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4" />
+                <path d="M12 8h.01" />
+            </svg>
+        </span>
+        <span>{{ message }}</span>
+    </div>
+    {% endif %}
+
+    {% if active_tab == 'queue' %}
+    <h2>Queue Visualization</h2>
+    <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+        Insertions occur at the <strong>Tail</strong> (Enqueue), removals occur at the <strong> Head</strong> (Dequeue).
+    </p>
+
+    <div class="visualizer-container" style="overflow-x: auto; padding: 1.5rem 1rem;">
+        {% if queue_items %}
+        {% for item in queue_items %}
+        <div class="queue-node-wrapper">
+            {% if loop.first and loop.last %}
+            <span class="queue-pointer-badge queue-head-badge">HEAD &amp; TAIL</span>
+            {% elif loop.first %}
+            <span class="queue-pointer-badge queue-head-badge">&darr; HEAD</span>
+            {% elif loop.last %}
+            <span class="queue-pointer-badge queue-tail-badge">&darr; TAIL</span>
+            {% else %}
+            <span style="height: 18px;"></span>
+            {% endif %}
+            <span class="node">{{ item }}</span>
+        </div>
+        {% if not loop.last %}
+        <span class="arrow">&rarr;</span>
+        {% endif %}
+        {% endfor %}
+        <span class="arrow">&rarr;</span>
+        <span class="node node-null">None</span>
+        {% else %}
+        <p style="margin: 0; color: var(--text-muted);">
+            <em>Queue is currently empty. Use the operations below to enqueue
+                elements.</em>
+        </p>
+        {% endif %}
+    </div>
+
+    <div class="stack-status-bar" style="margin-top: 1.25rem;">
+        <div class="status-chip">
+            <span class="status-label">Total Size:</span>
+            <span class="status-val">{{ queue_size }}</span>
+        </div>
+        <div class="status-chip">
+            <span class="status-label">Head:</span>
+            <span class="status-val">{{ queue_head if queue_head is not none else 'None' }}</span>
+        </div>
+        <div class="status-chip">
+            <span class="status-label">Tail:</span>
+            <span class="status-val">{{ queue_tail if queue_tail is not none else 'None' }}</span>
+        </div>
+        <div class="status-chip">
+            <span class="status-label">Status:</span>
+            <span class="status-val">{% if queue_items %}Active{% else %}Empty{% endif %}</span>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Queue Operations (Linked List)</h2>
+
+    <div class="operations-grid">
+        <div class="op-card">
+            <div>
+                <h3>1. Enqueue</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Appends a new node to the tail of the queue.
+                </p>
+            </div>
+            <form action="/works/queue" method="post">
+                <input type="hidden" name="structure" value="queue">
+                <input type="hidden" name="action" value="enqueue">
+                <input type="text" name="data" required placeholder="Element value (e.g. Noah, 42)">
+                <button type="submit">Enqueue</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>2. Dequeue</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Removes and returns the head node.
+                </p>
+            </div>
+            <form action="/works/queue" method="post">
+                <input type="hidden" name="structure" value="queue">
+                <input type="hidden" name="action" value="dequeue">
+                <button type="submit">Dequeue</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>3. Peek</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Inspects the head node without removing it.
+                </p>
+            </div>
+            <form action="/works/queue" method="post">
+                <input type="hidden" name="structure" value="queue">
+                <input type="hidden" name="action" value="queue_peek">
+                <button type="submit" class="btn-secondary">Peek Head</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>4. Clear Queue</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Empties all elements from the queue.
+                </p>
+            </div>
+            <form action="/works/queue" method="post">
+                <input type="hidden" name="structure" value="queue">
+                <input type="hidden" name="action" value="queue_clear">
+                <button type="submit" class="btn-danger">Clear Queue</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<h2>Deque Visualization</h2>
+<p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+    Elements can be inserted and removed from <strong>both ends</strong>.
+</p>
+
+<div class="visualizer-container" style="overflow-x: auto; padding: 1.5rem 1rem;">
+    {% if deque_items %}
+    <span class="node node-null">None</span>
+    <span class="arrow">&harr;</span>
+    {% for item in deque_items %}
+    <div class="queue-node-wrapper">
+        {% if loop.first and loop.last %}
+        <span class="queue-pointer-badge queue-head-badge">HEAD &amp; TAIL</span>
+        {% elif loop.first %}
+        <span class="queue-pointer-badge queue-head-badge">&darr; HEAD</span>
+        {% elif loop.last %}
+        <span class="queue-pointer-badge queue-tail-badge">&darr; TAIL</span>
+        {% else %}
+        <span style="height: 18px;"></span>
+        {% endif %}
+        <span class="node">{{ item }}</span>
+    </div>
+    {% if not loop.last %}
+    <span class="arrow">&harr;</span>
+    {% endif %}
+    {% endfor %}
+    <span class="arrow">&harr;</span>
+    <span class="node node-null">None</span>
+    {% else %}
+    <p style="margin: 0; color: var(--text-muted);">
+        <em>Deque is currently empty. Use the operations below to add elements to either end.</em>
+    </p>
+    {% endif %}
+</div>
+
+<div class="stack-status-bar" style="margin-top: 1.25rem;">
+    <div class="status-chip">
+        <span class="status-label">Total Size:</span>
+        <span class="status-val">{{ deque_size }}</span>
+    </div>
+    <div class="status-chip">
+        <span class="status-label">Head Element:</span>
+        <span class="status-val">{{ deque_head if deque_head is not none else 'None' }}</span>
+    </div>
+    <div class="status-chip">
+        <span class="status-label">Tail Element:</span>
+        <span class="status-val">{{ deque_tail if deque_tail is not none else 'None' }}</span>
+    </div>
+    <div class="status-chip">
+        <span class="status-label">Status:</span>
+        <span class="status-val">{% if deque_items %}Active{% else %}Empty{% endif %}</span>
+    </div>
+</div>
+</div>
+
+<div class="card">
+    <h2>Deque Operations</h2>
+
+    <div class="operations-grid">
+        <div class="op-card">
+            <div>
+                <h3>1. Add head</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Inserts a new element at the head.
+                </p>
+            </div>
+            <form action="/works/queue?tab=deque" method="post">
+                <input type="hidden" name="structure" value="deque">
+                <input type="hidden" name="action" value="add_head">
+                <input type="text" name="data" required placeholder="Element value">
+                <button type="submit">Add Head</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>2. Add tail</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Appends a new element at the tail.
+                </p>
+            </div>
+            <form action="/works/queue?tab=deque" method="post">
+                <input type="hidden" name="structure" value="deque">
+                <input type="hidden" name="action" value="add_tail">
+                <input type="text" name="data" required placeholder="Element value">
+                <button type="submit">Add Tail</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>3. Remove Head</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Removes and returns element from the Head.
+                </p>
+            </div>
+            <form action="/works/queue?tab=deque" method="post">
+                <input type="hidden" name="structure" value="deque">
+                <input type="hidden" name="action" value="remove_head">
+                <button type="submit">Remove Head</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>4. Remove Tail</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Removes and returns element from the tail.
+                </p>
+            </div>
+            <form action="/works/queue?tab=deque" method="post">
+                <input type="hidden" name="structure" value="deque">
+                <input type="hidden" name="action" value="remove_tail">
+                <button type="submit">Remove Tail</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>5. Peek Head &amp; Tail</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Inspect values at both ends without removing.
+                </p>
+            </div>
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
+                <form action="/works/queue?tab=deque" method="post" style="flex: 1;">
+                    <input type="hidden" name="structure" value="deque">
+                    <input type="hidden" name="action" value="deque_peek_head">
+                    <button type="submit" class="btn-secondary" style="width: 100%;">Peek Head</button>
+                </form>
+                <form action="/works/queue?tab=deque" method="post" style="flex: 1;">
+                    <input type="hidden" name="structure" value="deque">
+                    <input type="hidden" name="action" value="deque_peek_tail">
+                    <button type="submit" class="btn-secondary" style="width: 100%;">Peek Tail</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>6. Clear Deque</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Empties all elements from the deque.
+                </p>
+            </div>
+            <form action="/works/queue?tab=deque" method="post">
+                <input type="hidden" name="structure" value="deque">
+                <input type="hidden" name="action" value="deque_clear">
+                <button type="submit" class="btn-danger">Clear Deque</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

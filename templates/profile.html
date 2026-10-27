@@ -3,51 +3,75 @@
 {% block title %}Profile - Richmond John Ang{% endblock %}
 
 {% block content %}
-<div class="card">
-    <div class="profile-header-card">
-        <div class="profile-avatar-section">
+<div class="card profile-card">
+    <div class="profile-banner">
+        <button type="button" class="profile-banner-edit-btn" aria-label="Edit Banner" disabled title="Edit Banner">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                <path d="m15 5 4 4" />
+            </svg>
+        </button>
+    </div>
+
+    <div class="profile-info-body">
+        <div class="profile-avatar-wrapper">
             <div class="profile-avatar-circle">
-                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
                 </svg>
             </div>
-            <button type="button" class="btn-secondary profile-edit-btn" aria-label="Edit Profile Photo">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                <span>Edit Profile Photo</span>
+            <button type="button" class="profile-avatar-edit-btn" aria-label="Edit Profile Photo" disabled
+                title="Edit Profile Photo">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                    <path d="m15 5 4 4" />
+                </svg>
             </button>
         </div>
-        <div class="profile-header-details">
-            <h1>Richmond John Ang</h1>
-            <p style="color: var(--text-secondary); margin-top: 0.25rem;">
-                Bachelor of Science in Computer Engineering &middot; BS CpE 2-1
-            </p>
-            <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 0.25rem;">
-                Polytechnic University of the Philippines &middot; Manila
-            </p>
-        </div>
+
+        <h1 class="profile-greeting">Hi, Richmond John Ang!</h1>
     </div>
 </div>
 
-<div class="card">
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-        <div style="background-color: var(--bg-input); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
-            <h3 style="margin-bottom: 0.75rem;">User Information</h3>
-            <p><strong>Name:</strong> Richmond John Ang</p>
-            <p><strong>Course:</strong> Bachelor of Science in Computer Engineering</p>
-            <p><strong>Section:</strong> BS CPE 2-1</p>
-            <p><strong>Subject:</strong> Data Structures and Algorithms</p>
-        </div>
-
-        <div style="background-color: var(--bg-input); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
-            <h3 style="margin-bottom: 0.75rem;">Motto in Life</h3>
-            <blockquote style="border-left: 3px solid var(--accent); padding-left: 1rem; color: var(--text-secondary); font-style: italic; margin-top: 0.5rem;">
-                "Quit. Don't quit. Noodles. Don't noodles. You are too concerned with what was and what will be. There's a saying. Yesterday is history, Tomorrow is a mystery, but Today is a gift that's why it is called the Present."
-            </blockquote>
-            <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
-               - Master Oogway (Kung Fu Panda)
-            </p>
-        </div>
+<div class="card profile-section-card">
+    <div class="profile-section-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+        </svg>
+        <h2>About Me</h2>
     </div>
+    <div class="profile-about-list">
+        <p><strong>Name:</strong> Richmond John Ang</p>
+        <p><strong>Program:</strong> Bachelor of Science in Computer Engineering (BS CpE 2-1)</p>
+        <p><strong>Institution:</strong> Polytechnic University of the Philippines &middot; Sta. Mesa, Manila</p>
+        <p><strong>Course:</strong> Data Structures, Algorithms &amp; Web Development</p>
+        <p><strong>Languages:</strong> Python, HTML/CSS</p>
+    </div>
+</div>
+
+<div class="card profile-section-card">
+    <div class="profile-section-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path
+                d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" />
+            <path
+                d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
+        </svg>
+        <h2>Motto in Life</h2>
+    </div>
+    <blockquote class="profile-motto-quote">
+        "Quit. Don't quit. Noodles. Don't noodles. You are too concerned with what was and what will be. There's a
+        saying. Yesterday is history, Tomorrow is a mystery, but Today is a gift that's why it is called the Present."
+    </blockquote>
+    <p class="profile-motto-author">
+        &mdash; Master Oogway (Kung Fu Panda)
+    </p>
 </div>
 {% endblock %}

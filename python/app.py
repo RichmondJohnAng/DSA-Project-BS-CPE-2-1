@@ -4,10 +4,12 @@ try:
     from linkedlist import LinkedList
     from stack import Stack
     from infix_postfix import InfixPostfix
+    from queue_deque import Queue, Deque
 except ImportError:
     from python.linkedlist import LinkedList
     from python.stack import Stack
     from python.infix_postfix import InfixPostfix
+    from python.queue_deque import Queue, Deque
 
 app = Flask(
     __name__,
@@ -18,6 +20,8 @@ app = Flask(
 linked_list = LinkedList()
 stack = Stack()
 infix_postfix = InfixPostfix()
+queue = Queue()
+deque = Deque()
 
 def area_of_triangle(base, height):
     return 0.5 * float(base) * float(height)
@@ -214,9 +218,129 @@ def works_infix_postfix():
         error=error
     )
 
-@app.route('/contact')
+@app.route('/works/queue', methods=['GET', 'POST'])
+@app.route('/projects/queue', methods=['GET', 'POST'])
+@app.route('/works/queue-deque', methods=['GET', 'POST'])
+@app.route('/projects/queue-deque', methods=['GET', 'POST'])
+def works_queue():
+    message = None
+    structure = request.args.get('tab', 'queue')
+
+    if request.method == 'POST':
+        action = request.form.get('action')
+        data = request.form.get('data')
+        target_struct = request.form.get('structure', 'queue')
+        structure = target_struct
+
+        if action == 'enqueue':
+            if data:
+                queue.enqueue(data)
+                message = f"Enqueued '{data}' to tail of Queue."
+            else:
+                message = "Please provide a value to enqueue."
+
+        elif action == 'dequeue':
+            dequeued = queue.dequeue()
+            if dequeued is not None:
+                message = f"Dequeued '{dequeued}' from head of Queue."
+            else:
+                message = "Queue Underflow: Queue is empty, nothing to dequeue."
+
+        elif action == 'queue_peek':
+            head_val = queue.peek()
+            if head_val is not None:
+                message = f"Head element is '{head_val}'."
+            else:
+                message = "Queue is empty, no head element to peek."
+
+        elif action == 'queue_clear':
+            queue.clear()
+            message = "Queue has been cleared."
+
+        elif action in ('add_head', 'add_front'):
+            if data:
+                deque.add_head(data)
+                message = f"Added '{data}' to head of Deque."
+            else:
+                message = "Please provide a value to add."
+
+        elif action in ('add_tail', 'add_rear'):
+            if data:
+                deque.add_tail(data)
+                message = f"Added '{data}' to tail of Deque."
+            else:
+                message = "Please provide a value to add."
+
+        elif action in ('remove_head', 'remove_front'):
+            removed = deque.remove_head()
+            if removed is not None:
+                message = f"Removed '{removed}' from head of Deque."
+            else:
+                message = "Deque Underflow: Deque is empty, nothing to remove."
+
+        elif action in ('remove_tail', 'remove_rear'):
+            removed = deque.remove_tail()
+            if removed is not None:
+                message = f"Removed '{removed}' from tail of Deque."
+            else:
+                message = "Deque Underflow: Deque is empty, nothing to remove."
+
+        elif action in ('deque_peek_head', 'deque_peek_front'):
+            val = deque.peek_head()
+            if val is not None:
+                message = f"Head element is '{val}'."
+            else:
+                message = "Deque is empty, no head element."
+
+        elif action in ('deque_peek_tail', 'deque_peek_rear'):
+            val = deque.peek_tail()
+            if val is not None:
+                message = f"Tail element is '{val}'."
+            else:
+                message = "Deque is empty, no tail element."
+
+        elif action == 'deque_clear':
+            deque.clear()
+            message = "Deque has been cleared."
+
+    return render_template(
+        'queue.html',
+        queue_items=queue.to_list(),
+        queue_size=queue.size(),
+        queue_head=queue.peek(),
+        queue_tail=queue.tail.data if queue.tail else None,
+        queue_front=queue.peek(),
+        queue_rear=queue.tail.data if queue.tail else None,
+        deque_items=deque.to_list(),
+        deque_size=deque.size(),
+        deque_head=deque.peek_head(),
+        deque_tail=deque.peek_tail(),
+        deque_front=deque.peek_head(),
+        deque_rear=deque.peek_tail(),
+        active_tab=structure,
+        message=message
+    )
+
+@app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    return render_template('contact.html')
+    error = None
+    success = None
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        email = request.form.get('email', '').strip()
+        subject = request.form.get('subject', '').strip()
+        message = request.form.get('message', '').strip()
+        if not name:
+            error = "Please enter your full name."
+        elif not email or '@' not in email or '.' not in email.split('@')[-1]:
+            error = "Please enter a valid email address."
+        elif not subject:
+            error = "Please enter a subject."
+        elif not message or len(message) < 5:
+            error = "Please enter a message (at least 5 characters)."
+        else:
+            success = "Message received successfully! We will get back to you shortly."
+    return render_template('contact.html', error=error, success=success)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="127.0.0.1", port=5000, debug=True)

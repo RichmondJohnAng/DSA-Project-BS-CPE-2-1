@@ -1,12 +1,86 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block title %}Home - Richmond John Ang{% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Craze - Richmond John Ang</title>
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Playfair+Display:ital,wght@1,600;1,700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
 
-{% block content %}
-<div class="home-hero">
-    <h1>Welcome to my Programming Portfolio</h1>
-    <p>
-        A Computer Engineering student from Polytechnic University of the Philippines - Sta. Mesa, Manila
-    </p>
-</div>
-{% endblock %}
+<body class="standalone-home-body">
+    <header class="standalone-header">
+        <div class="standalone-header-inner">
+            <div class="standalone-brand">
+                <span class="standalone-brand-title">Code Craze</span>
+            </div>
+            <div class="standalone-header-right">
+                <a href="/profile" class="header-hub-btn" title="Enter Hub">Enter Hub</a>
+                <button type="button" id="standaloneThemeToggle" class="standalone-theme-toggle"
+                    aria-label="Toggle dark/light mode">
+                    <span class="theme-mode-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="4" />
+                            <path d="M12 2v2" />
+                            <path d="M12 20v2" />
+                            <path d="m4.93 4.93 1.41 1.41" />
+                            <path d="m17.66 17.66 1.41 1.41" />
+                            <path d="M2 12h2" />
+                            <path d="M20 12h2" />
+                            <path d="m6.34 17.66-1.41 1.41" />
+                            <path d="m19.07 4.93-1.41 1.41" />
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="standalone-main">
+        <div class="hero-split-container">
+            <div class="hero-text-col">
+                <p class="hero-hello">Hello, I am</p>
+                <h1 class="hero-name">Richmond John Ang</h1>
+                <h2 class="hero-headline">BS CpE 2-1</h2>
+                <p class="hero-desc">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                    et dolore magna aliqua.
+                </p>
+            </div>
+            <div class="hero-pfp-col">
+                <div class="hero-pfp-frame">
+                    <svg width="128" height="128" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="hero-pfp-svg">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const toggleBtn = document.getElementById('standaloneThemeToggle');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function () {
+                const nextTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', nextTheme);
+                localStorage.setItem('theme', nextTheme);
+            });
+        }
+    </script>
+</body>
+
+</html>

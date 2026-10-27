@@ -15,35 +15,6 @@
 </head>
 
 <body>
-    {% block splash %}
-    <div id="introSplash" class="intro-splash-overlay" style="display: none;" role="dialog" aria-modal="true"
-        aria-label="Welcome Splash Screen">
-        <div class="intro-splash-card">
-            <h1>Richmond John Ang</h1>
-            <div class="intro-splash-divider"></div>
-            <h2>Polytechnic University of the Philippines - BS CpE 2-1</h2>
-        </div>
-    </div>
-    <script>
-        (function () {
-            const alreadyShown = sessionStorage.getItem('splashShown');
-            const splash = document.getElementById('introSplash');
-            if (!alreadyShown && splash) {
-                splash.style.display = 'flex';
-                document.body.classList.add('splash-active');
-                sessionStorage.setItem('splashShown', 'true');
-                setTimeout(function () {
-                    splash.classList.add('fade-out');
-                    document.body.classList.remove('splash-active');
-                    setTimeout(function () {
-                        splash.style.display = 'none';
-                    }, 400);
-                }, 2000);
-            }
-        })();
-    </script>
-    {% endblock %}
-
     <div class="app-layout">
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
@@ -66,7 +37,7 @@
                 <div class="nav-section-title">Menu</div>
                 <ul class="sidebar-links">
                     <li>
-                        <a href="/" class="sidebar-link {% if request.path == '/' %}active{% endif %}" title="Home">
+                        <a href="/" class="sidebar-link" title="Home">
                             <span class="nav-icon">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
