@@ -1,30 +1,48 @@
-from flask import Flask, render_template, request
+﻿from flask import Flask, render_template, request, jsonify
 
 try:
     from linkedlist import LinkedList
     from stack import Stack
     from infix_postfix import InfixPostfix
     from queue_deque import Queue, Deque
+    from binary_tree import BinaryTree, Node
+    from letter_conversion import process_letter_conversion, to_uppercase
+    from area_of_circle import process_circle_area, calculate_area_of_circle, area_of_circle
+    from area_of_triangle import process_triangle_area, calculate_area_of_triangle, area_of_triangle
+    from profile import get_profile_level_data, get_melo_library_data
 except ImportError:
     from python.linkedlist import LinkedList
     from python.stack import Stack
     from python.infix_postfix import InfixPostfix
     from python.queue_deque import Queue, Deque
+    from python.binary_tree import BinaryTree, Node
+    from python.letter_conversion import process_letter_conversion, to_uppercase
+    from python.area_of_circle import process_circle_area, calculate_area_of_circle, area_of_circle
+    from python.area_of_triangle import process_triangle_area, calculate_area_of_triangle, area_of_triangle
+    from python.profile import get_profile_level_data, get_melo_library_data
 
 app = Flask(
     __name__,
     template_folder='../templates',
     static_folder='../static'
 )
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+
+@app.after_request
+def add_header(response):
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 linked_list = LinkedList()
 stack = Stack()
 infix_postfix = InfixPostfix()
 queue = Queue()
 deque = Deque()
-
-def area_of_triangle(base, height):
-    return 0.5 * float(base) * float(height)
+binary_tree = BinaryTree("R")
+binary_tree.load_default()
 
 @app.route('/')
 def index():
@@ -36,7 +54,15 @@ def projects():
 
 @app.route('/profile')
 def profile():
-    return render_template('profile.html')
+    return render_template(
+        'profile.html',
+        profile=get_profile_level_data(),
+        melo_song=get_melo_library_data()
+    )
+
+@app.route('/api/melo/ako-ang-bagyo')
+def api_melo_ako_ang_bagyo():
+    return jsonify(get_melo_library_data())
 
 @app.route('/works', methods=['GET', 'POST'])
 @app.route('/projects/capitalize', methods=['GET', 'POST'])
@@ -46,12 +72,7 @@ def works():
     input_string = ''
     if request.method == 'POST':
         input_string = request.form.get('inputString', '')
-        if not input_string.strip():
-            error = "Please enter some text."
-        elif not all(c.isalpha() or c.isspace() for c in input_string):
-            error = "Invalid input: Numbers and special characters are not accepted. Only letters (A-Z, a-z) are allowed."
-        else:
-            result = input_string.upper()
+        result, error = process_letter_conversion(input_string)
     return render_template('touppercase.html', result=result, error=error, input_string=input_string)
 
 @app.route('/works/area/circle', methods=['GET', 'POST'])
@@ -61,19 +82,8 @@ def acircle():
     error = None
     radius = ''
     if request.method == 'POST':
-        radius = request.form.get('radius', '').strip()
-        if not radius:
-            error = "Please enter a radius value."
-        else:
-            try:
-                r = float(radius)
-                if r <= 0:
-                    error = "Invalid input: Radius must be a positive number greater than 0."
-                else:
-                    area = 3.141592653589793 * (r ** 2)
-                    result = round(area, 4) if not area.is_integer() else int(area)
-            except (ValueError, TypeError):
-                error = "Invalid input: Letters and special characters are not accepted. Please enter a valid number."
+        radius = request.form.get('radius', '')
+        result, error = process_circle_area(radius)
     return render_template('circle.html', result=result, error=error, radius=radius)
 
 @app.route('/works/area/triangle', methods=['GET', 'POST'])
@@ -84,21 +94,9 @@ def atriangle():
     base = ''
     height = ''
     if request.method == 'POST':
-        base = request.form.get('base', '').strip()
-        height = request.form.get('height', '').strip()
-        if not base or not height:
-            error = "Please enter both base and height values."
-        else:
-            try:
-                b = float(base)
-                h = float(height)
-                if b <= 0 or h <= 0:
-                    error = "Invalid input: Base and height must be positive numbers greater than 0."
-                else:
-                    area = area_of_triangle(b, h)
-                    result = round(area, 4) if not area.is_integer() else int(area)
-            except (ValueError, TypeError):
-                error = "Invalid input: Letters and special characters are not accepted. Please enter valid numbers."
+        base = request.form.get('base', '')
+        height = request.form.get('height', '')
+        result, error = process_triangle_area(base, height)
     return render_template('triangle.html', result=result, error=error, base=base, height=height)
 
 @app.route('/works/linkedlist', methods=['GET', 'POST'])
@@ -318,6 +316,90 @@ def works_queue():
         deque_front=deque.peek_head(),
         deque_rear=deque.peek_tail(),
         active_tab=structure,
+        message=message
+    )
+
+@app.route('/works/binary-tree', methods=['GET', 'POST'])
+@app.route('/projects/binary-tree', methods=['GET', 'POST'])
+def works_binary_tree():
+    message = None
+    search_result = None
+
+    if request.method == 'POST':
+        action = request.form.get('action')
+        data = request.form.get('data', '').strip()
+        parent_val = request.form.get('parent', '').strip()
+        target = request.form.get('target', '').strip()
+
+        if action == 'set_root':
+            if data:
+                binary_tree.set_root(data)
+                message = f"Set root node to '{data}'."
+            else:
+                message = "Please provide a value for the root node."
+
+        elif action == 'insert_left':
+            if not data:
+                message = "Please provide a value to insert."
+            elif binary_tree.root is None:
+                binary_tree.set_root(data)
+                message = f"Tree was empty. Created root node '{data}'."
+            else:
+                target_node = binary_tree.root if not parent_val else binary_tree.find(binary_tree.root, parent_val)
+                if target_node is None:
+                    message = f"Parent node '{parent_val}' not found in the tree."
+                else:
+                    binary_tree.insert_left(target_node, data)
+                    message = f"Inserted '{data}' as left child of '{target_node.value}'."
+
+        elif action == 'insert_right':
+            if not data:
+                message = "Please provide a value to insert."
+            elif binary_tree.root is None:
+                binary_tree.set_root(data)
+                message = f"Tree was empty. Created root node '{data}'."
+            else:
+                target_node = binary_tree.root if not parent_val else binary_tree.find(binary_tree.root, parent_val)
+                if target_node is None:
+                    message = f"Parent node '{parent_val}' not found in the tree."
+                else:
+                    binary_tree.insert_right(target_node, data)
+                    message = f"Inserted '{data}' as right child of '{target_node.value}'."
+
+        elif action == 'search':
+            if target:
+                found = binary_tree.find(binary_tree.root, target) if binary_tree.root else None
+                if found:
+                    message = f"Node '{target}' was found in the binary tree!"
+                    search_result = target
+                else:
+                    message = f"Node '{target}' was not found in the binary tree."
+            else:
+                message = "Please enter a value to search."
+
+        elif action == 'load_default':
+            binary_tree.load_default()
+            message = "Loaded example binary tree (R with subtrees A and B)."
+
+        elif action == 'clear':
+            binary_tree.clear()
+            message = "Binary tree has been cleared."
+
+    preorder = binary_tree.preorder_traversal(binary_tree.root, "").strip() if binary_tree.root else ""
+    inorder = binary_tree.inorder_traversal(binary_tree.root, "").strip() if binary_tree.root else ""
+    postorder = binary_tree.postorder_traversal(binary_tree.root, "").strip() if binary_tree.root else ""
+
+    return render_template(
+        'binary_tree.html',
+        tree=binary_tree.to_dict(),
+        tree_root=binary_tree.root.value if binary_tree.root else None,
+        node_count=binary_tree.count_nodes(),
+        tree_height=binary_tree.height(),
+        all_nodes=binary_tree.get_nodes(),
+        preorder=preorder,
+        inorder=inorder,
+        postorder=postorder,
+        search_result=search_result,
         message=message
     )
 

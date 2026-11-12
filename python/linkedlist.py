@@ -6,7 +6,6 @@ class Node:
     def __repr__(self):
         return f"Node({self.data})"
 
-
 class LinkedList:
     def __init__(self):
         self.head = None

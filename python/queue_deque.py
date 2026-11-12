@@ -6,7 +6,6 @@ class Node:
     def __repr__(self):
         return f"Node({self.data})"
 
-
 class Queue:
     def __init__(self):
         self.head = None
@@ -59,7 +58,6 @@ class Queue:
         self.head = None
         self.tail = None
 
-
 class DequeNode:
     def __init__(self, data):
         self.data = data
@@ -68,7 +66,6 @@ class DequeNode:
 
     def __repr__(self):
         return f"DequeNode({self.data})"
-
 
 class Deque:
     def __init__(self):

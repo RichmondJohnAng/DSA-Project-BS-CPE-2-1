@@ -6,7 +6,6 @@ class Node:
     def __repr__(self):
         return f"Node({self.data})"
 
-
 class Stack:
     def __init__(self):
         self.top = None
@@ -63,7 +62,6 @@ class Stack:
             while current:
                 print(current.data)
                 current = current.next
-
 
 if __name__ == "__main__":
     stack = Stack()

@@ -1,77 +1,1329 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
 {% block title %}Profile - Richmond John Ang{% endblock %}
 
+{% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&display=swap" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
-<div class="card profile-card">
-    <div class="profile-banner">
-        <button type="button" class="profile-banner-edit-btn" aria-label="Edit Banner" disabled title="Edit Banner">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                <path d="m15 5 4 4" />
+
+<div class="card profile-hud-card">
+    <div class="profile-header-split">
+        <div class="profile-pfp-box">
+            <img src="{{ url_for('static', filename='images/pfp.jpg') }}?v=2" alt="Richmond John Ang"
+                class="profile-pfp-img"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="profile-pfp-fallback">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </div>
+        </div>
+
+        <div class="profile-info-fields">
+            <div class="profile-field-row">
+                <span class="field-label">Name:</span>
+                <span class="field-value field-name">Richmond John Ang</span>
+            </div>
+            <div class="profile-field-row">
+                <span class="field-label">ID:</span>
+                <span class="field-value field-id">d1cf541505c61855019397f3260b4563</span>
+            </div>
+            <div class="profile-field-row">
+                <span class="field-label">Status:</span>
+                <span class="field-value field-status">Online</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-level-section">
+        <div class="profile-level-header">
+            <div class="level-badge-wrap">
+                <span class="level-label">Level</span>
+                <span class="level-number" id="profileLevel">{{ profile.level }}</span>
+            </div>
+            <div class="days-counter-wrap">
+                <span class="days-counter" id="profileDaysDisplay">
+                    <span id="profileDaysPassed">{{ profile.days_passed }}</span>/<span id="profileTotalDays">{{ profile.total_days }}</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="profile-xp-track" role="progressbar" aria-valuenow="{{ profile.percent }}" aria-valuemin="0" aria-valuemax="100">
+            <div class="profile-xp-fill" id="profileXpFill" data-percent="{{ profile.percent }}"></div>
+        </div>
+
+        <div class="profile-cycle-hint">
+            <span>Progress</span>
+            <span id="profilePercentText">{{ profile.percent }}%</span>
+        </div>
+    </div>
+</div>
+
+<div class="card melo-library-card">
+    <div class="melo-library-header">
+        <label for="meloSongSelect" class="melo-library-label">MeloLibrary:</label>
+    </div>
+
+    <div class="melo-library-controls">
+        <div class="melo-select-wrap">
+            <select id="meloSongSelect" class="melo-dropdown-select" aria-label="Select MeloLibrary Song">
+                <option value="ako-ang-bagyo" selected>Ako ang Bagyo by SHEAN</option>
+                <option value="option-2">Option 2</option>
+                <option value="option-3">Option 3</option>
+            </select>
+        </div>
+
+        <button type="button" id="meloPlayBtn" class="melo-play-btn" aria-label="Play selected song">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <span>Play</span>
+        </button>
+
+        <a href="https://github.com/ivanhr-r" target="_blank" rel="noopener noreferrer" class="melo-credits-link">
+            Credits: ivanhr_r
+        </a>
+    </div>
+
+    <div id="meloNoticeBox" class="melo-notice-box" style="display: none;"></div>
+</div>
+
+<div class="card profile-stats-card">
+    <div class="profile-stats-header">
+        <h2>Stats</h2>
+    </div>
+
+    <div class="profile-stats-nav" role="tablist">
+        <button type="button" class="stats-tab-btn active" data-tab="academic" role="tab" aria-selected="true">
+            Academic
+        </button>
+        <button type="button" class="stats-tab-btn" data-tab="religious" role="tab" aria-selected="false">
+            Religious
+        </button>
+        <button type="button" class="stats-tab-btn" data-tab="other" role="tab" aria-selected="false">
+            Other...
+        </button>
+    </div>
+
+    <div class="profile-stats-dropdown-wrap">
+        <select class="stats-dropdown-select" id="statsDropdownSelect" aria-label="Select Stats Category">
+            <option value="academic" selected>Academic</option>
+            <option value="religious">Religious</option>
+            <option value="other">Other...</option>
+        </select>
+    </div>
+
+    <div class="stats-content-area">
+        <div class="stats-tab-pane active" id="pane-academic" role="tabpanel">
+            <div class="stats-info-list">
+                <div class="stats-info-item">
+                    <strong>Program:</strong>
+                    <span>Bachelor of Science in Computer Engineering (BS CpE 2-1)</span>
+                </div>
+                <div class="stats-info-item">
+                    <strong>Institution:</strong>
+                    <span>Polytechnic University of the Philippines &middot; Sta. Mesa, Manila</span>
+                </div>
+                <div class="stats-info-item">
+                    <strong>Focus:</strong>
+                    <span>Data Structures, Algorithms &amp; Full-Stack Web Development</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-tab-pane" id="pane-religious" role="tabpanel">
+            <div class="stats-info-list">
+                <div class="stats-info-item">
+                    <strong>Affiliation / Faith:</strong>
+                    <span>Christian / Catholic Faith</span>
+                </div>
+                <div class="stats-info-item">
+                    <strong>Values:</strong>
+                    <span>Compassion, Integrity, Perseverance &amp; Humility</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-tab-pane" id="pane-other" role="tabpanel">
+            <div class="stats-info-list">
+                <div class="stats-info-item">
+                    <strong>Languages:</strong>
+                    <span>Python, HTML5, CSS3, JavaScript</span>
+                </div>
+                <div class="stats-info-item">
+                    <strong>Life Motto:</strong>
+                    <span>"Yesterday is history, tomorrow is a mystery, but today is a gift — that is why it is called the present." &mdash; Master Oogway</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="meloVisualizerOverlay" class="melo-visualizer-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <canvas id="meloStormCanvas" class="melo-storm-canvas"></canvas>
+
+    <div class="melo-overlay-header">
+        <div class="melo-overlay-track-info">
+            <span class="melo-track-title">Ako ang Bagyo</span>
+            <span class="melo-track-artist">&mdash; SHEAN</span>
+            <a href="https://github.com/ivanhr-r" target="_blank" rel="noopener noreferrer" class="melo-overlay-credit-pill">
+                Credits: ivanhr_r
+            </a>
+        </div>
+        <button type="button" id="meloCloseOverlayBtn" class="melo-close-btn" aria-label="Close visualizer">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
         </button>
     </div>
 
-    <div class="profile-info-body">
-        <div class="profile-avatar-wrapper">
-            <div class="profile-avatar-circle">
-                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
+    <div id="meloRepeatCenter" class="melo-repeat-center" style="display: none;">
+        <button type="button" id="meloCenterReplayBtn" class="melo-center-replay-btn" aria-label="Replay">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="1 4 1 10 7 10"></polyline>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+            </svg>
+            <span>Replay</span>
+        </button>
+    </div>
+
+    <div class="melo-overlay-footer">
+        <div class="melo-footer-inner">
+            <button type="button" id="meloOverlayPlayPause" class="melo-ctrl-icon-btn" aria-label="Play or Pause">
+                <svg id="meloIconPause" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+                    <rect x="14" y="4" width="4" height="16" rx="1"></rect>
                 </svg>
+                <svg id="meloIconPlay" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+            </button>
+
+            <span id="meloTimeLabel" class="melo-time-label">01:48 / 02:28</span>
+
+            <div class="melo-scrub-bar" id="meloScrubBar" role="slider" aria-label="Audio progress">
+                <div class="melo-scrub-track">
+                    <div class="melo-scrub-fill" id="meloScrubFill"></div>
+                </div>
             </div>
-            <button type="button" class="profile-avatar-edit-btn" aria-label="Edit Profile Photo" disabled
-                title="Edit Profile Photo">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                    <path d="m15 5 4 4" />
+
+            <button type="button" id="meloReplayBtn" class="melo-ctrl-icon-btn" aria-label="Replay" title="Replay">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 4v6h6"></path>
+                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
                 </svg>
             </button>
         </div>
+    </div>
 
-        <h1 class="profile-greeting">Hi, Richmond John Ang!</h1>
-    </div>
+    <audio id="meloAudioPlayer" preload="auto" src="{{ url_for('static', filename='audio/ako_ang_bagyo.webm') }}"></audio>
 </div>
+{% endblock %}
 
-<div class="card profile-section-card">
-    <div class="profile-section-header">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
-        </svg>
-        <h2>About Me</h2>
-    </div>
-    <div class="profile-about-list">
-        <p><strong>Name:</strong> Richmond John Ang</p>
-        <p><strong>Program:</strong> Bachelor of Science in Computer Engineering (BS CpE 2-1)</p>
-        <p><strong>Institution:</strong> Polytechnic University of the Philippines &middot; Sta. Mesa, Manila</p>
-        <p><strong>Course:</strong> Data Structures, Algorithms &amp; Web Development</p>
-        <p><strong>Languages:</strong> Python, HTML/CSS</p>
-    </div>
-</div>
+{% block scripts %}
 
-<div class="card profile-section-card">
-    <div class="profile-section-header">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path
-                d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" />
-            <path
-                d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
-        </svg>
-        <h2>Motto in Life</h2>
-    </div>
-    <blockquote class="profile-motto-quote">
-        "Quit. Don't quit. Noodles. Don't noodles. You are too concerned with what was and what will be. There's a
-        saying. Yesterday is history, Tomorrow is a mystery, but Today is a gift that's why it is called the Present."
-    </blockquote>
-    <p class="profile-motto-author">
-        &mdash; Master Oogway (Kung Fu Panda)
-    </p>
-</div>
+<div id="meloSongData" style="display: none;" data-melo='{{ melo_song | tojson if melo_song else "{}" }}'></div>
+
+<script>
+(function () {
+    function updateProfileCycle() {
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const birthYear = 2006;
+        const birthMonth = 4;
+        const birthDay = 29;
+
+        let prevBday = new Date(currentYear, birthMonth, birthDay);
+        let nextBday = new Date(currentYear + 1, birthMonth, birthDay);
+        let level = currentYear - birthYear;
+
+        if (now < prevBday) {
+            prevBday = new Date(currentYear - 1, birthMonth, birthDay);
+            nextBday = new Date(currentYear, birthMonth, birthDay);
+            level = currentYear - 1 - birthYear;
+        }
+
+        const oneDayMs = 1000 * 60 * 60 * 24;
+        const daysPassed = Math.floor((now.getTime() - prevBday.getTime()) / oneDayMs);
+        const totalDays = Math.round((nextBday.getTime() - prevBday.getTime()) / oneDayMs);
+        const percent = Math.min(100, Math.max(0, ((daysPassed / totalDays) * 100))).toFixed(1);
+
+        const levelEl = document.getElementById('profileLevel');
+        const daysPassedEl = document.getElementById('profileDaysPassed');
+        const totalDaysEl = document.getElementById('profileTotalDays');
+        const fillEl = document.getElementById('profileXpFill');
+        const percentTextEl = document.getElementById('profilePercentText');
+
+        if (levelEl) levelEl.textContent = level;
+        if (daysPassedEl) daysPassedEl.textContent = daysPassed;
+        if (totalDaysEl) totalDaysEl.textContent = totalDays;
+        if (fillEl) fillEl.style.width = percent + '%';
+        if (percentTextEl) percentTextEl.textContent = percent + '%';
+    }
+
+    updateProfileCycle();
+
+    const tabBtns = document.querySelectorAll('.stats-tab-btn');
+    const tabPanes = document.querySelectorAll('.stats-tab-pane');
+    const statsSelect = document.getElementById('statsDropdownSelect');
+
+    function switchTab(targetTab) {
+        tabBtns.forEach(function (b) {
+            const isActive = b.getAttribute('data-tab') === targetTab;
+            b.classList.toggle('active', isActive);
+            b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+        tabPanes.forEach(function (p) {
+            p.classList.toggle('active', p.id === 'pane-' + targetTab);
+        });
+        if (statsSelect && statsSelect.value !== targetTab) {
+            statsSelect.value = targetTab;
+        }
+    }
+
+    tabBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            switchTab(this.getAttribute('data-tab'));
+        });
+    });
+
+    if (statsSelect) {
+        statsSelect.addEventListener('change', function () {
+            switchTab(this.value);
+        });
+    }
+
+    const meloSongSelect = document.getElementById('meloSongSelect');
+    const meloPlayBtn = document.getElementById('meloPlayBtn');
+    const meloNoticeBox = document.getElementById('meloNoticeBox');
+    const meloOverlay = document.getElementById('meloVisualizerOverlay');
+    const meloCloseBtn = document.getElementById('meloCloseOverlayBtn');
+    const meloAudio = document.getElementById('meloAudioPlayer');
+    const meloPlayPauseBtn = document.getElementById('meloOverlayPlayPause');
+    const meloIconPause = document.getElementById('meloIconPause');
+    const meloIconPlay = document.getElementById('meloIconPlay');
+    const meloTimeLabel = document.getElementById('meloTimeLabel');
+    const meloScrubBar = document.getElementById('meloScrubBar');
+    const meloScrubFill = document.getElementById('meloScrubFill');
+    const meloReplayBtn = document.getElementById('meloReplayBtn');
+    const meloRepeatCenter = document.getElementById('meloRepeatCenter');
+    const meloCenterReplayBtn = document.getElementById('meloCenterReplayBtn');
+    const canvas = document.getElementById('meloStormCanvas');
+    const ctx = canvas ? canvas.getContext('2d') : null;
+
+    let meloData = null;
+    const meloDataEl = document.getElementById('meloSongData');
+    if (meloDataEl) {
+        try {
+            meloData = JSON.parse(meloDataEl.getAttribute('data-melo') || '{}');
+        } catch (e) {
+            console.warn('Could not parse meloSongData:', e);
+        }
+    }
+
+    const START_TIME = (meloData && meloData.start_at) ? meloData.start_at : 108.81;
+    const END_TIME = (meloData && meloData.end_at) ? meloData.end_at : 148.17;
+    let RAW_LINES = [
+        { start: 0.00, text: "Tinatali mo ko sa pag asa", slot: 5.67 },
+        { start: 5.67, text: "@ivanhr_r", slot: 1.77 },
+        { start: 7.44, text: "Matakot na kayo", slot: 4.87 },
+        { start: 12.31, text: "Ako, ako, ako ang bagyoooo", slot: 4.74 },
+        { start: 17.05, text: "Kulimlim ng langit sa inyong dalawa", slot: 5.56 },
+        { start: 22.61, text: "Bulong ko sa hangin sana di kayo masaya", slot: 5.55 },
+        { start: 28.16, text: "Sa tibay ng bahay na titirhan nyo", slot: 5.94 },
+        { start: 34.10, text: "Tatangayin ko bawat yero", slot: 8.00 }
+    ];
+
+    if (meloData && meloData.lines && meloData.lines.length > 0) {
+        RAW_LINES = meloData.lines.map(function (item) {
+            return {
+                start: Math.max(0, item.time - START_TIME),
+                text: item.text,
+                slot: item.duration || 5.0
+            };
+        });
+    }
+
+    const keywords = {
+        "bagyo": { color: "#FFF1A8", glow: "#5b7fe0", scale: 2.1, event: "strike" },
+        "ako": { color: "#BFD9FF", glow: "#3558a8", scale: 1.45, event: null },
+        "yero": { color: "#DDE6F2", glow: "#6a7a90", scale: 1.9, event: "yero" },
+        "matakot": { color: "#FFB09C", glow: "#a8321f", scale: 1.5, event: null },
+        "tatangayin": { color: "#9FE3FF", glow: "#2a7fa8", scale: 1.5, event: "gust" },
+        "kulimlim": { color: "#C9D3E6", glow: "#3b4a68", scale: 1.4, event: null },
+        "masaya": { color: "#FF9DB4", glow: "#a82a4a", scale: 1.4, event: null },
+        "kayo": { color: "#FF9DB4", glow: "#a82a4a", scale: 1.2, event: null },
+        "dalawa": { color: "#FF9DB4", glow: "#a82a4a", scale: 1.3, event: null }
+    };
+
+    const zones = [
+        [0.28, 0.42], [0.72, 0.44], [0.28, 0.74],
+        [0.72, 0.72], [0.50, 0.58], [0.50, 0.38]
+    ];
+
+    function clamp01(v) { return Math.max(0, Math.min(1, v)); }
+    function easeOutCubic(p) { return 1 - Math.pow(1 - p, 3); }
+    function easeInCubic(p) { return Math.pow(p, 3); }
+
+    function hexToRgb(c) {
+        if (!c || c[0] !== '#') return [200, 220, 255];
+        return [
+            parseInt(c.slice(1, 3), 16),
+            parseInt(c.slice(3, 5), 16),
+            parseInt(c.slice(5, 7), 16)
+        ];
+    }
+
+    function mixColors(c1, c2, t) {
+        if (t <= 0) return c1;
+        if (t >= 1) return c2;
+        const rgb1 = hexToRgb(c1);
+        const rgb2 = hexToRgb(c2);
+        const r = Math.round(rgb1[0] + (rgb2[0] - rgb1[0]) * t);
+        const g = Math.round(rgb1[1] + (rgb2[1] - rgb1[1]) * t);
+        const b = Math.round(rgb1[2] + (rgb2[2] - rgb1[2]) * t);
+        return 'rgb(' + r + ',' + g + ',' + b + ')';
+    }
+
+    function normWord(w) {
+        return (w || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    }
+
+    function buildHeartHalves() {
+        const n = 36;
+        const right = [];
+        const left = [];
+        for (let i = 0; i <= n; i++) {
+            const rad = (Math.PI * i) / n;
+            const x = (16 * Math.pow(Math.sin(rad), 3)) / 17.0;
+            const y = (-(13 * Math.cos(rad) - 5 * Math.cos(2 * rad) - 2 * Math.cos(3 * rad) - Math.cos(4 * rad))) / 17.0 - 1.0;
+            right.push([x, y]);
+        }
+        for (let i = 0; i <= n; i++) {
+            const rad = Math.PI + (Math.PI * i) / n;
+            const x = (16 * Math.pow(Math.sin(rad), 3)) / 17.0;
+            const y = (-(13 * Math.cos(rad) - 5 * Math.cos(2 * rad) - 2 * Math.cos(3 * rad) - Math.cos(4 * rad))) / 17.0 - 1.0;
+            left.push([x, y]);
+        }
+        const zigRaw = [[0, 17], [2.5, 12], [-2, 7], [2, 2], [-2.5, -1.5], [0, -5]];
+        const zig = zigRaw.map(function (p) { return [p[0] / 17.0, p[1] / 17.0 - 1.0]; });
+        const rightZig = zig.slice(1, -1);
+        const leftZig = zig.slice(1, -1).slice().reverse();
+        return {
+            right: right.concat(rightZig),
+            left: left.concat(leftZig)
+        };
+    }
+    const HEART_HALVES = buildHeartHalves();
+
+    let sw = window.innerWidth;
+    let sh = window.innerHeight;
+    function resizeCanvas() {
+        if (!canvas) return;
+        sw = canvas.width = window.innerWidth;
+        sh = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    class StormSimulation {
+        constructor() {
+            this.init();
+        }
+
+        init() {
+            this.t = 0;
+            this.lastNow = performance.now() / 1000;
+            this.gusts = [];
+            this.pulses = [];
+            this.bolts = [];
+            this.debris = [];
+            this.streaks = [];
+            this.hearts = [];
+            this.activeLines = [];
+            this.spawned = new Array(RAW_LINES.length).fill(false);
+            this.recentZones = [];
+            this.nextStrike = 0.6;
+            this.nextGust = 2.0;
+            this.nextYero = 5.0;
+            this.nextShard = 1.0;
+            this.flash = 0.0;
+            this.bg = '#070b16';
+            this.isEnded = false;
+
+            this.initClouds();
+            this.initRain();
+        }
+
+        initClouds() {
+            this.cloudTiers = ['#0f1626', '#172036', '#222d47'];
+            this.clouds = [];
+            const n = Math.max(8, Math.floor(sw / 180));
+            for (let ci = 0; ci < n; ci++) {
+                const cx = (Math.random() * (sw + 200)) - 100;
+                const cy = Math.random() * sh * 0.14;
+                const sc = 0.9 + Math.random() * 0.7;
+                const puffs = [];
+                for (let p = 0; p < 7; p++) {
+                    puffs.push({
+                        ox: (Math.random() * 260 - 130) * sc,
+                        oy: (Math.random() * 60 - 26) * sc,
+                        rx: (95 + Math.random() * 75) * sc,
+                        ry: (48 + Math.random() * 44) * sc,
+                        tier: Math.floor(Math.random() * 3)
+                    });
+                }
+                this.clouds.push({
+                    x: cx,
+                    cy: cy,
+                    speed: 10 + Math.random() * 22,
+                    puffs: puffs
+                });
+            }
+        }
+
+        initRain() {
+            const k = Math.max(0.6, Math.min(1.5, sw / 1920));
+            const total = Math.floor(260 * k);
+            this.rain = [];
+            const layers = [
+                { share: 0.40, v0: 500, v1: 800, w: 1, c: '#46597a', wf: 1.4 },
+                { share: 0.40, v0: 800, v1: 1200, w: 1, c: '#7a93b8', wf: 1.9 },
+                { share: 0.20, v0: 1200, v1: 1700, w: 2, c: '#b3c8ec', wf: 2.4 }
+            ];
+            for (let l = 0; l < layers.length; l++) {
+                const lay = layers[l];
+                const count = Math.floor(total * lay.share);
+                for (let i = 0; i < count; i++) {
+                    this.rain.push({
+                        x: Math.random() * (sw + 300) - 150,
+                        y: Math.random() * (sh + 100) - 50,
+                        vy: lay.v0 + Math.random() * (lay.v1 - lay.v0),
+                        w: lay.w,
+                        c: lay.c,
+                        wf: lay.wf
+                    });
+                }
+            }
+        }
+
+        addGust(t, amp) {
+            this.gusts.push({
+                s: t,
+                d: 1.6 + Math.random() * 1.4,
+                a: amp || (150 + Math.random() * 170)
+            });
+        }
+
+        getWind(t) {
+            let w = 70 + 45 * Math.sin(t * 0.6) + 20 * Math.sin(t * 1.7);
+            const live = [];
+            for (let i = 0; i < this.gusts.length; i++) {
+                const g = this.gusts[i];
+                const ph = (t - g.s) / g.d;
+                if (ph < 1) {
+                    live.push(g);
+                    if (ph >= 0) w += g.a * Math.sin(Math.PI * ph);
+                }
+            }
+            this.gusts = live;
+            return w;
+        }
+
+        triggerStrike(t, targetX, targetY) {
+            let x0 = targetX !== undefined ? targetX + (Math.random() * 80 - 40) : (sw * 0.1 + Math.random() * sw * 0.8);
+            let y0 = sh * 0.05;
+            let x1 = targetX !== undefined ? targetX : (x0 + (Math.random() * sw * 0.2 - sw * 0.1));
+            let y1 = targetY !== undefined ? targetY : (sh * 0.55 + Math.random() * sh * 0.35);
+
+            const trunk = [];
+            const segs = 16;
+            for (let s = 0; s <= segs; s++) {
+                const u = s / segs;
+                let px = x0 + (x1 - x0) * u;
+                let py = y0 + (y1 - y0) * u;
+                if (s > 0 && s < segs) {
+                    px += (Math.random() * 76 - 38);
+                    py += (Math.random() * 30 - 15);
+                }
+                trunk.push([px, py]);
+            }
+
+            const branches = [];
+            const bCount = 2 + Math.floor(Math.random() * 3);
+            for (let b = 0; b < bCount; b++) {
+                const pick = 3 + Math.floor(Math.random() * 10);
+                const bx = trunk[pick][0];
+                const by = trunk[pick][1];
+                const sign = Math.random() < 0.5 ? -1 : 1;
+                const ex = bx + sign * (70 + Math.random() * 140);
+                const ey = by + (80 + Math.random() * 170);
+                const brPts = [];
+                const bSegs = 7;
+                for (let k = 0; k <= bSegs; k++) {
+                    const bu = k / bSegs;
+                    let xk = bx + (ex - bx) * bu;
+                    let yk = by + (ey - by) * bu;
+                    if (k > 0 && k < bSegs) {
+                        xk += (Math.random() * 40 - 20);
+                        yk += (Math.random() * 20 - 10);
+                    }
+                    brPts.push([xk, yk]);
+                }
+                branches.push(brPts);
+            }
+
+            this.bolts.push({
+                born: t,
+                trunk: trunk,
+                branches: branches
+            });
+
+            this.pulses.push([t, 1.0]);
+            this.pulses.push([t + 0.14, 0.55]);
+            this.pulses.push([t + 0.30, 0.8]);
+        }
+
+        spawnHeart(t) {
+            const size = 60 + Math.random() * 34;
+            const x = 120 + Math.random() * (sw - 240);
+            const y = sh * 0.25 + Math.random() * (sh * 0.6);
+            this.hearts.push({
+                x: x,
+                y: y,
+                size: size,
+                t0: t,
+                due: t + 0.9 + Math.random() * 0.6,
+                hitAt: null
+            });
+        }
+
+        pickZone() {
+            const available = zones.filter(z => !this.recentZones.includes(z));
+            const choices = available.length > 0 ? available : zones;
+            const zone = choices[Math.floor(Math.random() * choices.length)];
+            this.recentZones.push(zone);
+            if (this.recentZones.length > 3) this.recentZones.shift();
+            return zone;
+        }
+
+        startLine(lineIdx, t) {
+            const raw = RAW_LINES[lineIdx];
+            const isMatakot = raw.text.toLowerCase().includes('matakot');
+            const isMobile = sw < 640;
+
+            let zone = this.pickZone();
+            if (isMatakot) {
+                zone = [isMobile ? 0.56 : 0.62, 0.46];
+            } else if (isMobile) {
+                zone = [0.50, (lineIdx % 2 === 0 ? 0.46 : 0.54)];
+            }
+
+            const words = raw.text.split(/\s+/);
+            const baseSize = Math.max(16, Math.min(38, Math.floor(sw / 34)));
+
+            const wordObjs = [];
+            const perRow = words.length <= 2 ? 1 : (isMobile ? 2 : (Math.random() < 0.5 ? 2 : 3));
+            const rows = [];
+            for (let i = 0; i < words.length; i += perRow) {
+                rows.push(words.slice(i, i + perRow));
+            }
+
+            const holdEnd = raw.start + raw.slot - 0.9;
+            const lastMax = holdEnd - 1.1 - 0.5;
+            const gapT = Math.max(0.15, Math.min(0.9, (lastMax - (raw.start + 0.2)) / Math.max(words.length - 1, 1)));
+            const outStart = holdEnd;
+
+            let globalWordIdx = 0;
+            const sign = Math.random() < 0.5 ? -1 : 1;
+            const numRows = rows.length;
+            const gap = Math.round(baseSize * 0.65);
+            const margin = Math.max(20, Math.floor(sw * 0.05));
+
+            for (let r = 0; r < numRows; r++) {
+                const row = rows[r];
+                const rowLen = row.length;
+                const rowWordInfos = [];
+                let rowWidth = 0;
+
+                for (let c = 0; c < rowLen; c++) {
+                    const text = row[c];
+                    const norm = normWord(text);
+                    const kw = keywords[norm] || null;
+                    const scale = kw ? kw.scale : (0.94 + Math.random() * 0.16);
+                    const size = Math.floor(baseSize * scale);
+                    const font = 'italic 700 ' + size + 'px Montserrat, sans-serif';
+                    const wW = Math.round(size * (text.length * 0.58 + 0.2));
+                    rowWidth += wW;
+                    rowWordInfos.push({
+                        text: text,
+                        norm: norm,
+                        kw: kw,
+                        size: size,
+                        font: font,
+                        width: wW
+                    });
+                }
+                rowWidth += (rowLen - 1) * gap;
+
+                let rowCenterX = sw * zone[0] + (sign * (r % 2 === 0 ? 1 : -1) * (sw * 0.02));
+                if (rowCenterX - rowWidth / 2 < margin) {
+                    rowCenterX = margin + rowWidth / 2;
+                }
+                if (rowCenterX + rowWidth / 2 > sw - margin) {
+                    rowCenterX = sw - margin - rowWidth / 2;
+                }
+
+                let curX = rowCenterX - rowWidth / 2;
+                for (let c = 0; c < rowLen; c++) {
+                    const info = rowWordInfos[c];
+                    let wordX = Math.round(curX + info.width / 2);
+                    curX += info.width + gap;
+
+                    if (info.norm === 'matakot') {
+                        wordX = Math.min(sw - margin - info.width / 2, wordX + Math.round(sw * 0.035));
+                    }
+
+                    let wordY = Math.round(sh * zone[1] + (r - (numRows - 1) / 2) * (baseSize * 2.1));
+                    if (wordY < sh * 0.18) wordY = Math.round(sh * 0.18);
+                    if (wordY > sh * 0.82) wordY = Math.round(sh * 0.82);
+
+                    wordObjs.push({
+                        text: info.text,
+                        kw: info.kw,
+                        font: info.font,
+                        size: info.size,
+                        color: info.kw ? info.kw.color : '#E9F0FF',
+                        glow: info.kw ? info.kw.glow : null,
+                        event: info.kw ? info.kw.event : null,
+                        fired: false,
+                        t0: raw.start + 0.2 + globalWordIdx * gapT,
+                        outStart: outStart,
+                        stagger: Math.random() * 0.45,
+                        x: wordX,
+                        y: wordY,
+                        ang: (Math.random() * 6 - 3) * (Math.PI / 180),
+                        amp: info.kw ? (info.kw.event === 'strike' ? 2.2 : 1.8) : 0.8,
+                        blowDx: 380 + Math.random() * 420,
+                        blowDy: Math.random() * 120 - 60,
+                        spinOut: (Math.random() * 60 - 30) * (Math.PI / 180),
+                        ph1: Math.random() * Math.PI * 2,
+                        ph2: Math.random() * Math.PI * 2
+                    });
+                    globalWordIdx++;
+                }
+            }
+
+            this.activeLines.push({
+                index: lineIdx,
+                words: wordObjs,
+                end: raw.start + raw.slot + 1.2
+            });
+
+            this.spawnHeart(t);
+            if (raw.text.toLowerCase().includes('bagyo')) {
+                this.addGust(t, 280);
+                for (let k = 0; k < 6; k++) {
+                    this.debris.push(this.createDebris('shard'));
+                }
+            }
+        }
+
+        createDebris(kind) {
+            const isYero = kind === 'yero';
+            return {
+                kind: kind,
+                x: -Math.random() * 200 - 50,
+                y: sh * 0.15 + Math.random() * (sh * 0.75),
+                vx: isYero ? (650 + Math.random() * 350) : (500 + Math.random() * 450),
+                w: isYero ? (90 + Math.random() * 60) : (12 + Math.random() * 12),
+                h: isYero ? (40 + Math.random() * 22) : (8 + Math.random() * 8),
+                ang: Math.random() * Math.PI * 2,
+                spin: isYero ? (Math.random() * 8 - 4) : (Math.random() * 20 - 10),
+                flip: isYero ? (2.5 + Math.random() * 2.5) : (3 + Math.random() * 5),
+                ph: Math.random() * Math.PI * 2,
+                color: isYero ? '#8d99a8' : ['#2f3b2a', '#3f4d33', '#5a4630', '#6b7b8c', '#46505f'][Math.floor(Math.random() * 5)]
+            };
+        }
+
+        update(t, dt) {
+            const ending = t > 39.5;
+            const wind = this.getWind(t);
+
+            for (let i = 0; i < RAW_LINES.length; i++) {
+                if (!this.spawned[i] && t >= RAW_LINES[i].start) {
+                    this.spawned[i] = true;
+                    this.startLine(i, t);
+                }
+            }
+
+            if (!ending) {
+                if (t >= this.nextStrike) {
+                    this.triggerStrike(t);
+                    this.nextStrike = t + 2.8 + Math.random() * 3.7;
+                }
+                if (t >= this.nextGust) {
+                    this.addGust(t);
+                    this.nextGust = t + 4.0 + Math.random() * 4.0;
+                }
+                if (t >= this.nextYero) {
+                    this.debris.push(this.createDebris('yero'));
+                    this.nextYero = t + 5.0 + Math.random() * 5.0;
+                }
+                if (t >= this.nextShard && this.debris.length < 18) {
+                    this.debris.push(this.createDebris('shard'));
+                    this.nextShard = t + 0.3 + Math.random() * 0.45;
+                }
+                if (wind > 200 && this.streaks.length < 18 && Math.random() < 0.35) {
+                    this.streaks.push({
+                        x: -Math.random() * 200 - 50,
+                        y: sh * 0.1 + Math.random() * (sh * 0.85),
+                        len: 140 + Math.random() * 240,
+                        v: 1500 + Math.random() * 1100,
+                        amp: 6 + Math.random() * 18,
+                        f: 2 + Math.random() * 3,
+                        ph: Math.random() * Math.PI * 2
+                    });
+                }
+            }
+
+            for (let h = 0; h < this.hearts.length; h++) {
+                const ht = this.hearts[h];
+                if (ht.hitAt === null && t >= ht.due) {
+                    ht.hitAt = t;
+                    this.triggerStrike(t, ht.x, ht.y);
+                    this.addGust(t, 220);
+                }
+            }
+
+            let flash = 0.0;
+            const livePulses = [];
+            for (let p = 0; p < this.pulses.length; p++) {
+                const ts = this.pulses[p][0];
+                const amp = this.pulses[p][1];
+                const dtp = t - ts;
+                if (dtp < 0) {
+                    livePulses.push(this.pulses[p]);
+                } else if (dtp < 1.6) {
+                    livePulses.push(this.pulses[p]);
+                    flash = Math.max(flash, amp * Math.exp(-dtp * 7.5));
+                }
+            }
+            this.pulses = livePulses;
+            this.flash = flash;
+
+            for (let c = 0; c < this.clouds.length; c++) {
+                const cl = this.clouds[c];
+                cl.x += (cl.speed + wind * 0.22) * dt;
+                if (cl.x > sw + 400) cl.x = -400;
+            }
+
+            for (let r = 0; r < this.rain.length; r++) {
+                const rn = this.rain[r];
+                rn.x += (wind * rn.wf) * dt;
+                rn.y += rn.vy * dt;
+                if (rn.y > sh + 40 || rn.x > sw + 80) {
+                    rn.y = -Math.random() * 100 - 10;
+                    rn.x = Math.random() * (sw + 300) - 150;
+                }
+            }
+
+            for (let s = this.streaks.length - 1; s >= 0; s--) {
+                const st = this.streaks[s];
+                st.x += st.v * dt;
+                if (st.x - st.len > sw) this.streaks.splice(s, 1);
+            }
+
+            for (let d = this.debris.length - 1; d >= 0; d--) {
+                const db = this.debris[d];
+                db.x += (db.vx + wind * 1.4) * dt;
+                db.y += Math.sin(t * 1.7 + db.ph) * 90 * dt;
+                db.ang += db.spin * dt;
+                if (db.x > sw + 300) this.debris.splice(d, 1);
+            }
+
+            for (let b = this.bolts.length - 1; b >= 0; b--) {
+                const bt = this.bolts[b];
+                if (t - bt.born > 0.6) this.bolts.splice(b, 1);
+            }
+
+            for (let h = this.hearts.length - 1; h >= 0; h--) {
+                const ht = this.hearts[h];
+                if (ht.hitAt !== null && (t - ht.hitAt > 3.0)) {
+                    this.hearts.splice(h, 1);
+                }
+            }
+
+            for (let l = this.activeLines.length - 1; l >= 0; l--) {
+                const ln = this.activeLines[l];
+                if (t >= ln.end) this.activeLines.splice(l, 1);
+            }
+        }
+
+        draw(ctx) {
+            if (!ctx) return;
+
+            const bgCol = mixColors('#070b16', '#cfe0ff', this.flash * 0.55);
+            ctx.fillStyle = bgCol;
+            ctx.fillRect(0, 0, sw, sh);
+
+            ctx.save();
+            for (let c = 0; c < this.clouds.length; c++) {
+                const cl = this.clouds[c];
+                for (let p = 0; p < cl.puffs.length; p++) {
+                    const pf = cl.puffs[p];
+                    const baseTierCol = this.cloudTiers[pf.tier];
+                    const litCol = mixColors(baseTierCol, '#9db4e6', this.flash * (0.35 + 0.2 * pf.tier));
+                    ctx.fillStyle = litCol;
+                    ctx.beginPath();
+                    ctx.ellipse(cl.x + pf.ox, cl.cy + pf.oy, pf.rx, pf.ry, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            ctx.restore();
+
+            ctx.save();
+            ctx.lineCap = 'round';
+            for (let r = 0; r < this.rain.length; r++) {
+                const rn = this.rain[r];
+                ctx.strokeStyle = rn.c;
+                ctx.lineWidth = rn.w;
+                ctx.beginPath();
+                ctx.moveTo(rn.x, rn.y);
+                ctx.lineTo(rn.x - (rn.wf * 14), rn.y - 18);
+                ctx.stroke();
+            }
+            ctx.restore();
+
+            ctx.save();
+            for (let s = 0; s < this.streaks.length; s++) {
+                const st = this.streaks[s];
+                const alpha = Math.max(0, Math.sin(Math.PI * clamp01(st.x / sw))) * 0.55;
+                ctx.strokeStyle = 'rgba(143, 166, 204, ' + alpha + ')';
+                ctx.lineWidth = 1.6;
+                ctx.beginPath();
+                const step = st.len / 6;
+                const base = this.t * st.f + st.ph;
+                for (let i = 0; i < 7; i++) {
+                    const px = st.x - step * i;
+                    const py = st.y + Math.sin(base + i * 0.7) * st.amp;
+                    if (i === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.stroke();
+            }
+            ctx.restore();
+
+            ctx.save();
+            for (let d = 0; d < this.debris.length; d++) {
+                const db = this.debris[d];
+                ctx.save();
+                ctx.translate(db.x, db.y);
+                ctx.rotate(db.ang);
+
+                if (db.kind === 'yero') {
+                    const flip = Math.abs(Math.cos(this.t * db.flip + db.ph));
+                    const hh = db.h * (0.25 + 0.75 * flip);
+                    const w2 = db.w / 2;
+                    const h2 = hh / 2;
+                    const skew = db.w * 0.1;
+
+                    ctx.fillStyle = mixColors('#4a5565', '#b7c3d1', flip);
+                    ctx.strokeStyle = '#cfd8e3';
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.moveTo(-w2 + skew, -h2);
+                    ctx.lineTo(w2 + skew, -h2);
+                    ctx.lineTo(w2 - skew, h2);
+                    ctx.lineTo(-w2 - skew, h2);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+
+                    ctx.strokeStyle = '#5e6a78';
+                    ctx.lineWidth = 1.8;
+                    const ribs = [-0.25, 0, 0.25];
+                    for (let ri = 0; ri < ribs.length; ri++) {
+                        const rx = ribs[ri] * db.w;
+                        ctx.beginPath();
+                        ctx.moveTo(rx, -h2);
+                        ctx.lineTo(rx, h2);
+                        ctx.stroke();
+                    }
+                } else {
+                    ctx.fillStyle = db.color;
+                    ctx.beginPath();
+                    ctx.moveTo(-db.w / 2, db.h / 2);
+                    ctx.lineTo(db.w / 2, db.h / 4);
+                    ctx.lineTo(0, -db.h / 2);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+            ctx.restore();
+
+            ctx.save();
+            for (let b = 0; b < this.bolts.length; b++) {
+                const bt = this.bolts[b];
+                const age = this.t - bt.born;
+                let lv = 0;
+                if (age < 0.07) lv = 1.0;
+                else if (age < 0.13) lv = 0.15;
+                else if (age < 0.32) lv = 1.0 - ((age - 0.13) / 0.19) * 0.55;
+                else lv = Math.max(0.0, 0.45 * (1 - (age - 0.32) / 0.28));
+
+                const allPaths = [bt.trunk].concat(bt.branches);
+                ctx.save();
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+
+                ctx.strokeStyle = 'rgba(111, 147, 255, ' + (lv * 0.7) + ')';
+                ctx.lineWidth = 14;
+                for (let p = 0; p < allPaths.length; p++) {
+                    const pts = allPaths[p];
+                    ctx.beginPath();
+                    for (let i = 0; i < pts.length; i++) {
+                        if (i === 0) ctx.moveTo(pts[i][0], pts[i][1]);
+                        else ctx.lineTo(pts[i][0], pts[i][1]);
+                    }
+                    ctx.stroke();
+                }
+
+                ctx.strokeStyle = 'rgba(246, 249, 255, ' + lv + ')';
+                ctx.lineWidth = 3;
+                for (let p = 0; p < allPaths.length; p++) {
+                    const pts = allPaths[p];
+                    ctx.beginPath();
+                    for (let i = 0; i < pts.length; i++) {
+                        if (i === 0) ctx.moveTo(pts[i][0], pts[i][1]);
+                        else ctx.lineTo(pts[i][0], pts[i][1]);
+                    }
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+            ctx.restore();
+
+            ctx.save();
+            for (let h = 0; h < this.hearts.length; h++) {
+                const ht = this.hearts[h];
+                const age = this.t - ht.t0;
+                const aIn = easeOutCubic(clamp01(age / 0.5));
+                let scale = (ht.size / 2) * (0.6 + 0.4 * aIn);
+                let sep = 0;
+                let rot = 0;
+                let fall = 0;
+                let drift = 0;
+                let hFlash = 0;
+                let a = aIn;
+
+                if (ht.hitAt === null) {
+                    scale *= (1 + 0.07 * Math.sin(age * 16));
+                } else {
+                    const hage = this.t - ht.hitAt;
+                    const aOut = clamp01((hage - 1.8) / 1.2);
+                    a = aIn * (1 - aOut);
+                    const p = clamp01(hage / 1.6);
+                    sep = easeOutCubic(p) * ht.size * 0.32;
+                    rot = easeOutCubic(p) * 0.42;
+                    fall = Math.pow(hage, 2) * ht.size * 0.35;
+                    drift = this.getWind(this.t) * 0.05 * hage;
+                    hFlash = clamp01(1 - hage / 0.18);
+                }
+
+                const cy = ht.y + fall;
+                const fillCol = mixColors(mixColors('rgba(0,0,0,0)', '#c0122c', a), '#ffffff', hFlash * 0.85 * a);
+                const lineCol = mixColors(mixColors('rgba(0,0,0,0)', '#ff7a8c', a), '#ffffff', hFlash * a);
+
+                ctx.save();
+                ctx.fillStyle = fillCol;
+                ctx.strokeStyle = lineCol;
+                ctx.lineWidth = 2;
+
+                ctx.save();
+                ctx.translate(ht.x - sep + drift, cy);
+                ctx.rotate(-rot);
+                ctx.beginPath();
+                for (let i = 0; i < HEART_HALVES.left.length; i++) {
+                    const px = HEART_HALVES.left[i][0] * scale;
+                    const py = HEART_HALVES.left[i][1] * scale;
+                    if (i === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+
+                ctx.save();
+                ctx.translate(ht.x + sep + drift, cy);
+                ctx.rotate(rot);
+                ctx.beginPath();
+                for (let i = 0; i < HEART_HALVES.right.length; i++) {
+                    const px = HEART_HALVES.right[i][0] * scale;
+                    const py = HEART_HALVES.right[i][1] * scale;
+                    if (i === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+
+                ctx.restore();
+            }
+            ctx.restore();
+
+            ctx.save();
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            for (let l = 0; l < this.activeLines.length; l++) {
+                const line = this.activeLines[l];
+                for (let w = 0; w < line.words.length; w++) {
+                    const word = line.words[w];
+                    if (this.t < word.t0) continue;
+
+                    if (!word.fired) {
+                        word.fired = true;
+                        if (word.event === 'strike') {
+                            this.triggerStrike(this.t, word.x, word.y);
+                            this.addGust(this.t, 280);
+                        } else if (word.event === 'yero') {
+                            for (let k = 0; k < 5; k++) this.debris.push(this.createDebris('yero'));
+                            this.addGust(this.t, 240);
+                        } else if (word.event === 'gust') {
+                            this.addGust(this.t, 300);
+                        }
+                    }
+
+                    const e = easeOutCubic(clamp01((this.t - word.t0) / 1.1));
+                    const o = easeInCubic(clamp01((this.t - word.outStart - word.stagger) / 1.2));
+                    if (o >= 1.0) continue;
+
+                    const a = e * (1 - o);
+                    const tr = word.amp * (0.3 + 0.4 * e) * (1 - o * 0.7);
+                    const tx = Math.round(Math.sin(this.t * 14 + word.ph1) * tr * 0.6);
+                    const ty = Math.round(Math.cos(this.t * 12 + word.ph2) * tr * 0.4);
+
+                    const inSlide = -(1 - e) * Math.min(20, sw * 0.035);
+                    const x = word.x + inSlide + o * word.blowDx + tx;
+                    const y = word.y + (1 - e) * 5 + o * word.blowDy + ty;
+                    const ang = word.ang - (1 - e) * (4 * Math.PI / 180) + o * word.spinOut;
+
+                    ctx.save();
+                    ctx.translate(Math.round(x), Math.round(y));
+                    ctx.rotate(ang);
+                    ctx.font = word.font;
+
+                    if (word.glow) {
+                        ctx.shadowColor = word.glow;
+                        ctx.shadowBlur = Math.min(22, Math.max(10, Math.round(word.size * 0.4)));
+                        ctx.shadowOffsetX = 0;
+                        ctx.shadowOffsetY = 0;
+                    } else {
+                        ctx.shadowColor = 'rgba(3, 6, 13, ' + (a * 0.95) + ')';
+                        ctx.shadowBlur = 8;
+                        ctx.shadowOffsetX = 2;
+                        ctx.shadowOffsetY = 2;
+                    }
+
+                    let mainCol = word.color;
+                    if (this.flash > 0.05) {
+                        mainCol = mixColors(word.color, '#ffffff', this.flash * 0.4);
+                    }
+                    ctx.fillStyle = mixColors('rgba(0,0,0,0)', mainCol, a);
+                    ctx.fillText(word.text, 0, 0);
+
+                    ctx.restore();
+                }
+            }
+            ctx.restore();
+        }
+    }
+
+    const stormSim = new StormSimulation();
+    let isOverlayActive = false;
+    let animId = null;
+
+    function formatSecs(sec) {
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    }
+
+    function renderLoop() {
+        if (!isOverlayActive) return;
+
+        let curTime = START_TIME;
+        if (meloAudio) {
+            curTime = meloAudio.currentTime;
+        }
+
+        if (curTime >= END_TIME) {
+            if (meloAudio && !meloAudio.paused) {
+                meloAudio.pause();
+                meloAudio.currentTime = END_TIME;
+            }
+            if (meloIconPause) meloIconPause.style.display = 'none';
+            if (meloIconPlay) meloIconPlay.style.display = 'block';
+            if (meloRepeatCenter) { const rs = meloRepeatCenter.querySelector('span'); if (rs) rs.textContent = 'Replay'; meloRepeatCenter.style.display = 'flex'; }
+        }
+
+        const now = performance.now() / 1000;
+        const dt = Math.min(0.05, now - stormSim.lastNow);
+        stormSim.lastNow = now;
+
+        const simT = Math.max(0, curTime - START_TIME);
+        stormSim.t = simT;
+        stormSim.update(simT, dt);
+        stormSim.draw(ctx);
+
+        if (meloTimeLabel) {
+            meloTimeLabel.textContent = formatSecs(curTime) + ' / ' + formatSecs(END_TIME);
+        }
+        if (meloScrubFill) {
+            const prog = Math.max(0, Math.min(100, ((curTime - START_TIME) / (END_TIME - START_TIME)) * 100));
+            meloScrubFill.style.width = prog + '%';
+        }
+
+        animId = requestAnimationFrame(renderLoop);
+    }
+
+    function openVisualizer() {
+        if (!meloOverlay || !meloAudio) return;
+        isOverlayActive = true;
+        resizeCanvas();
+        if (meloRepeatCenter) meloRepeatCenter.style.display = 'none';
+        meloOverlay.classList.add('active');
+        meloOverlay.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('nav-locked');
+
+        stormSim.init();
+        meloAudio.currentTime = START_TIME;
+        const playPromise = meloAudio.play();
+        if (playPromise !== undefined) {
+            playPromise.then(function () {
+                if (meloIconPause) meloIconPause.style.display = 'block';
+                if (meloIconPlay) meloIconPlay.style.display = 'none';
+            }).catch(function (e) {
+                console.warn('Playback error:', e);
+            });
+        }
+
+        cancelAnimationFrame(animId);
+        stormSim.lastNow = performance.now() / 1000;
+        animId = requestAnimationFrame(renderLoop);
+    }
+
+    function closeVisualizer() {
+        if (!meloOverlay || !meloAudio) return;
+        isOverlayActive = false;
+        cancelAnimationFrame(animId);
+        meloAudio.pause();
+        meloOverlay.classList.remove('active');
+        meloOverlay.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('nav-locked');
+    }
+
+    function replayFromStart() {
+        if (!meloAudio) return;
+        if (meloRepeatCenter) meloRepeatCenter.style.display = 'none';
+        stormSim.init();
+        meloAudio.currentTime = START_TIME;
+        const playPromise = meloAudio.play();
+        if (playPromise !== undefined) {
+            playPromise.then(function () {
+                if (meloIconPause) meloIconPause.style.display = 'block';
+                if (meloIconPlay) meloIconPlay.style.display = 'none';
+            }).catch(function (e) {
+                console.warn('Playback error:', e);
+            });
+        }
+        stormSim.lastNow = performance.now() / 1000;
+    }
+
+    if (meloPlayBtn) {
+        meloPlayBtn.addEventListener('click', function () {
+            const selected = meloSongSelect ? meloSongSelect.value : 'ako-ang-bagyo';
+            if (selected === 'ako-ang-bagyo') {
+                if (meloNoticeBox) meloNoticeBox.style.display = 'none';
+                openVisualizer();
+            } else {
+                const optText = meloSongSelect.options[meloSongSelect.selectedIndex].text;
+                if (meloNoticeBox) {
+                    meloNoticeBox.textContent = optText + ' has no function for now. Please select "Ako ang Bagyo by SHEAN" to launch the storm visualizer.';
+                    meloNoticeBox.style.display = 'block';
+                }
+            }
+        });
+    }
+
+    if (meloCloseBtn) {
+        meloCloseBtn.addEventListener('click', closeVisualizer);
+    }
+
+    if (meloCenterReplayBtn) {
+        const rs = meloCenterReplayBtn.querySelector('span');
+        if (rs) rs.textContent = 'Replay';
+        meloCenterReplayBtn.addEventListener('click', replayFromStart);
+    }
+
+    if (meloReplayBtn) {
+        meloReplayBtn.addEventListener('click', replayFromStart);
+    }
+
+    if (meloPlayPauseBtn) {
+        meloPlayPauseBtn.addEventListener('click', function () {
+            if (!meloAudio) return;
+            if (meloAudio.paused) {
+                if (meloAudio.currentTime >= END_TIME) {
+                    replayFromStart();
+                } else {
+                    meloAudio.play();
+                    if (meloIconPause) meloIconPause.style.display = 'block';
+                    if (meloIconPlay) meloIconPlay.style.display = 'none';
+                    if (meloRepeatCenter) meloRepeatCenter.style.display = 'none';
+                }
+            } else {
+                meloAudio.pause();
+                if (meloIconPause) meloIconPause.style.display = 'none';
+                if (meloIconPlay) meloIconPlay.style.display = 'block';
+            }
+        });
+    }
+
+    if (meloAudio) {
+        meloAudio.addEventListener('ended', function () {
+            if (meloIconPause) meloIconPause.style.display = 'none';
+            if (meloIconPlay) meloIconPlay.style.display = 'block';
+            if (meloRepeatCenter) { const rs = meloRepeatCenter.querySelector('span'); if (rs) rs.textContent = 'Replay'; meloRepeatCenter.style.display = 'flex'; }
+        });
+    }
+
+    if (meloScrubBar) {
+        meloScrubBar.addEventListener('click', function (e) {
+            if (!meloAudio) return;
+            const rect = meloScrubBar.getBoundingClientRect();
+            const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+            const targetTime = START_TIME + pos * (END_TIME - START_TIME);
+            meloAudio.currentTime = targetTime;
+            if (meloRepeatCenter) meloRepeatCenter.style.display = 'none';
+        });
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && isOverlayActive) {
+            closeVisualizer();
+        }
+    });
+})();
+</script>
 {% endblock %}

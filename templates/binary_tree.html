@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block title %}Binary Tree{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Binary Tree Interactive Demo</h1>
+    <p style="color: var(--text-secondary); margin-top: 0.5rem;">
+        A <strong>Binary Tree</strong> is a non-linear, hierarchical data structure where each node has at most two children:
+        a <strong>Left Child</strong> and a <strong>Right Child</strong>. It supports recursive tree traversals including
+        <strong>Preorder</strong> (Root &rarr; Left &rarr; Right), <strong>Inorder</strong> (Left &rarr; Root &rarr; Right), and 
+        <strong>Postorder</strong> (Left &rarr; Right &rarr; Root).
+    </p>
+
+    {% if message %}
+        <div class="alert {% if 'not found' in message or 'empty' in message or 'Please' in message %}alert-error{% else %}alert-success{% endif %}">
+            <span class="alert-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+                </svg>
+            </span>
+            <span>{{ message }}</span>
+        </div>
+    {% endif %}
+
+    <h2>Tree Visualization</h2>
+
+    {% macro render_tree_node(node) %}
+        {% if node %}
+            <div class="btree-node-wrapper">
+                <div class="btree-node {% if search_result and search_result == node.value %}btree-highlight{% endif %}" title="Node {{ node.value }}">
+                    <span class="btree-val">{{ node.value }}</span>
+                </div>
+                {% if node.left or node.right %}
+                    <div class="btree-branches">
+                        <div class="btree-branch btree-left">
+                            <span class="branch-label">L</span>
+                            {% if node.left %}
+                                {{ render_tree_node(node.left) }}
+                            {% else %}
+                                <div class="btree-leaf-null" title="Empty left child">&empty;</div>
+                            {% endif %}
+                        </div>
+                        <div class="btree-branch btree-right">
+                            <span class="branch-label">R</span>
+                            {% if node.right %}
+                                {{ render_tree_node(node.right) }}
+                            {% else %}
+                                <div class="btree-leaf-null" title="Empty right child">&empty;</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endmacro %}
+
+    <div class="btree-visualizer-container">
+        {% if tree %}
+            {{ render_tree_node(tree) }}
+        {% else %}
+            <div style="text-align: center; color: var(--text-muted); padding: 2rem 0;">
+                <p><em>Binary Tree is currently empty. Use the operations below to set a root or load the example tree.</em></p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="stack-status-bar">
+        <div class="status-chip">
+            <span class="status-label">Root Node:</span>
+            <span class="status-val">{% if tree_root %}{{ tree_root }}{% else %}None{% endif %}</span>
+        </div>
+        <div class="status-chip">
+            <span class="status-label">Total Nodes:</span>
+            <span class="status-val">{{ node_count }}</span>
+        </div>
+        <div class="status-chip">
+            <span class="status-label">Tree Height:</span>
+            <span class="status-val">{{ tree_height }}</span>
+        </div>
+        <div class="status-chip">
+            <span class="status-label">Status:</span>
+            <span class="status-val">{% if tree %}Active{% else %}Empty{% endif %}</span>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Tree Traversals</h2>
+    <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+        Depth-First Search (DFS) traversals implemented in <code>binary_tree.py</code>:
+    </p>
+
+    <div class="traversal-box">
+        <div class="traversal-row">
+            <span class="traversal-name">1. Preorder (N-L-R):</span>
+            {% if preorder %}
+                <div class="traversal-chain">
+                    {% for item in preorder.split() %}
+                        <span class="traversal-item">{{ item }}</span>
+                        {% if not loop.last %}<span class="traversal-arrow">&rarr;</span>{% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <span style="color: var(--text-muted); font-size: 0.85rem;"><em>Empty tree</em></span>
+            {% endif %}
+        </div>
+
+        <div class="traversal-row">
+            <span class="traversal-name">2. Inorder (L-N-R):</span>
+            {% if inorder %}
+                <div class="traversal-chain">
+                    {% for item in inorder.split() %}
+                        <span class="traversal-item">{{ item }}</span>
+                        {% if not loop.last %}<span class="traversal-arrow">&rarr;</span>{% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <span style="color: var(--text-muted); font-size: 0.85rem;"><em>Empty tree</em></span>
+            {% endif %}
+        </div>
+
+        <div class="traversal-row">
+            <span class="traversal-name">3. Postorder (L-R-N):</span>
+            {% if postorder %}
+                <div class="traversal-chain">
+                    {% for item in postorder.split() %}
+                        <span class="traversal-item">{{ item }}</span>
+                        {% if not loop.last %}<span class="traversal-arrow">&rarr;</span>{% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <span style="color: var(--text-muted); font-size: 0.85rem;"><em>Empty tree</em></span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Binary Tree Operations</h2>
+
+    <div class="operations-grid">
+        <div class="op-card">
+            <div>
+                <h3>1. Insert Left Child</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Inserts a new node as the left child of an existing node.
+                </p>
+            </div>
+            <form action="/works/binary-tree" method="post">
+                <input type="hidden" name="action" value="insert_left">
+                {% if all_nodes %}
+                    <label style="font-size: 0.8rem; color: var(--text-muted);">Select Parent Node:</label>
+                    <select name="parent" style="width: 100%; padding: 0.55rem 0.75rem; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: var(--radius-md);">
+                        {% for n in all_nodes %}
+                            <option value="{{ n }}">{{ n }}{% if loop.first %} (Root){% endif %}</option>
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    <input type="text" name="parent" placeholder="Parent node (e.g. R)">
+                {% endif %}
+                <input type="text" name="data" required placeholder="New node value (e.g. A, 10)">
+                <button type="submit">Insert Left</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>2. Insert Right Child</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Inserts a new node as the right child of an existing node.
+                </p>
+            </div>
+            <form action="/works/binary-tree" method="post">
+                <input type="hidden" name="action" value="insert_right">
+                {% if all_nodes %}
+                    <label style="font-size: 0.8rem; color: var(--text-muted);">Select Parent Node:</label>
+                    <select name="parent" style="width: 100%; padding: 0.55rem 0.75rem; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: var(--radius-md);">
+                        {% for n in all_nodes %}
+                            <option value="{{ n }}">{{ n }}{% if loop.first %} (Root){% endif %}</option>
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    <input type="text" name="parent" placeholder="Parent node (e.g. R)">
+                {% endif %}
+                <input type="text" name="data" required placeholder="New node value (e.g. B, 20)">
+                <button type="submit">Insert Right</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>3. Set / Replace Root</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Initializes or changes the root node of the binary tree.
+                </p>
+            </div>
+            <form action="/works/binary-tree" method="post">
+                <input type="hidden" name="action" value="set_root">
+                <input type="text" name="data" required placeholder="Root value (e.g. R, 100)">
+                <button type="submit">Set Root</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>4. Search Node</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Searches for a specific value and highlights it on the tree diagram.
+                </p>
+            </div>
+            <form action="/works/binary-tree" method="post">
+                <input type="hidden" name="action" value="search">
+                <input type="text" name="target" required placeholder="Node value to find">
+                <button type="submit" class="btn-secondary">Search Node</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>5. Load Example Tree</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Loads the standard <code>binary_tree.py</code> example (R with children A..G).
+                </p>
+            </div>
+            <form action="/works/binary-tree" method="post">
+                <input type="hidden" name="action" value="load_default">
+                <button type="submit" class="btn-secondary">Load Example Tree</button>
+            </form>
+        </div>
+
+        <div class="op-card">
+            <div>
+                <h3>6. Clear Tree</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Deletes all nodes and resets the binary tree to empty.
+                </p>
+            </div>
+            <form action="/works/binary-tree" method="post">
+                <input type="hidden" name="action" value="clear">
+                <button type="submit" class="btn-danger">Clear Tree</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
