@@ -1,34 +1,114 @@
 {% extends "base.html" %}
 
-{% block title %}To Uppercase{% endblock %}
+{% block title %}Capitalize Letters{% endblock %}
 
 {% block content %}
+<a href="/projects" class="back-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    <span>Back to Projects</span>
+</a>
+
 <div class="card">
-    <h1>Convert String to Uppercase</h1>
-    <p>Enter text containing letters only.</p>
+    <div style="margin-bottom: 1.25rem;">
+        <h1>Letter Converter</h1>
+        <p style="color: var(--text-secondary); margin-top: 0.25rem; font-size: 0.95rem;">
+            Convert lower case letters to upper case.
+        </p>
+    </div>
 
     {% if error %}
     <div class="alert alert-error">
         <span class="alert-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
         </span>
         <span>{{ error }}</span>
     </div>
     {% endif %}
 
-    <form action="/works" method="post">
-        <div class="form-group">
-            <label for="inputString">Enter text:</label>
-            <input type="text" id="inputString" name="inputString" value="{{ input_string or '' }}" required placeholder="Enter letters only (e.g. Hello World)" pattern="[A-Za-z\s]+" title="Only alphabetic letters and spaces are allowed">
+    <div class="converter-box">
+        <div class="converter-box-header">
+            <span class="converter-label">Result</span>
+            <span class="converter-badge {% if result %}is-uppercase{% endif %}" id="converterBadge">{% if result
+                %}Uppercase{% else %}Typing...{% endif %}</span>
         </div>
-        <button type="submit">Convert</button>
-    </form>
-
-    {% if result %}
-    <div class="result-card">
-        <label>Converted Output:</label>
-        <div class="result-value">{{ result }}</div>
+        <div class="converter-screen {% if result %}is-converted{% endif %}" id="converterScreen">
+            <span class="converter-output-text" id="converterText">{% if result %}{{ result }}{% elif input_string %}{{
+                input_string }}{% else %}<span class="placeholder-muted">Start typing below...</span>{% endif %}</span>
+        </div>
     </div>
-    {% endif %}
+
+    <form action="/works" method="post" id="uppercaseForm">
+        <div class="form-group">
+            <label for="inputString"
+                style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem; display: block;">Enter
+                text:</label>
+            <div class="input-with-button">
+                <input type="text" id="inputString" name="inputString" value="{{ input_string or '' }}" required
+                    placeholder="Type letters (e.g. hello world)" pattern="[A-Za-z\s]+"
+                    title="Only alphabetic letters and spaces are allowed" autocomplete="off" spellcheck="false">
+                <button type="submit" class="btn-convert" id="submitBtn">Convert</button>
+            </div>
+        </div>
+    </form>
 </div>
+
+<script>
+    (function () {
+        const input = document.getElementById('inputString');
+        const screen = document.getElementById('converterScreen');
+        const text = document.getElementById('converterText');
+        const badge = document.getElementById('converterBadge');
+        const form = document.getElementById('uppercaseForm');
+
+        if (!input || !screen || !text) return;
+
+        input.addEventListener('input', function () {
+            const val = this.value;
+            screen.classList.remove('is-converted');
+            if (badge) {
+                badge.textContent = 'Typing...';
+                badge.classList.remove('is-uppercase');
+            }
+
+            if (val.length > 0) {
+                text.textContent = val;
+            } else {
+                text.innerHTML = '<span class="placeholder-muted">Start typing below...</span>';
+            }
+        });
+
+        function showConverted() {
+            const val = input.value;
+            if (val && val.trim().length > 0) {
+                text.textContent = val.toUpperCase();
+                screen.classList.add('is-converted');
+                if (badge) {
+                    badge.textContent = 'Uppercase';
+                    badge.classList.add('is-uppercase');
+                }
+            }
+        }
+
+        if (form) {
+            form.addEventListener('submit', function () {
+                showConverted();
+            });
+        }
+
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                showConverted();
+            }
+        });
+    })();
+</script>
 {% endblock %}

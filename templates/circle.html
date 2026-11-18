@@ -3,32 +3,147 @@
 {% block title %}Area of Circle{% endblock %}
 
 {% block content %}
+<a href="/projects" class="back-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    <span>Back to Projects</span>
+</a>
+
 <div class="card">
-    <h1>Area of a Circle</h1>
-    <p>Calculate the area of a circle.</p>
+    <div style="margin-bottom: 1.25rem;">
+        <h1>Area of a Circle</h1>
+        <p style="color: var(--text-secondary); margin-top: 0.25rem; font-size: 0.95rem;">
+            Given radius <em>r</em>, the area is calculated using <em>A</em> = &pi;<em>r</em>&sup2;.
+        </p>
+    </div>
 
     {% if error %}
     <div class="alert alert-error">
         <span class="alert-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
         </span>
         <span>{{ error }}</span>
     </div>
     {% endif %}
 
-    <form action="/works/area/circle" method="post">
-        <div class="form-group">
-            <label for="radius">Radius (r):</label>
-            <input type="number" step="any" min="0.0001" id="radius" name="radius" value="{{ radius or '' }}" required placeholder="Enter positive circle radius">
-        </div>
-        <button type="submit">Compute Area</button>
-    </form>
+    <!-- Geometric Circle Viewport -->
+    <div class="circle-canvas-card {% if result is not none %}is-calculated{% endif %}" id="circleCanvasCard">
+        <svg class="circle-svg-viewport" viewBox="0 0 300 190" xmlns="http://www.w3.org/2000/svg">
+            <!-- Circle Shape -->
+            <circle id="geoCircle" cx="150" cy="95" r="50" fill="rgba(0, 245, 155, 0.06)" stroke="var(--accent)" stroke-width="2" />
 
-    {% if result is not none %}
-    <div class="result-card">
-        <label>Computed Area:</label>
-        <div class="result-value">{{ result }}</div>
+            <!-- Origin Center Point -->
+            <circle id="geoCenter" cx="150" cy="95" r="3" fill="#f0f8ff" />
+
+            <!-- Radius Line -->
+            <line id="geoRadiusLine" x1="150" y1="95" x2="200" y2="95" stroke="#f0f8ff" stroke-width="1.8" />
+
+            <!-- Radius Label -->
+            <text id="geoRadiusText" x="175" y="87" fill="#f0f8ff" font-size="13" font-weight="600" text-anchor="middle" font-style="italic">r</text>
+        </svg>
+
+        <div class="circle-equation-bar">
+            <span class="equation-formula" id="equationDisplay">
+                {% if result is not none %}
+                    A = &pi; &times; ({{ radius }})&sup2; = <strong class="equation-result">{{ result }}</strong>
+                {% else %}
+                    A = &pi; &times; r&sup2;
+                {% endif %}
+            </span>
+        </div>
     </div>
-    {% endif %}
+
+    <form action="/works/area/circle" method="post" id="circleForm">
+        <div class="form-group">
+            <label for="radius" style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem; display: block;">Radius (r):</label>
+            <div class="input-with-button">
+                <input type="number" step="any" min="0.0001" id="radius" name="radius" value="{{ radius or '' }}" required placeholder="Enter radius (e.g. 5)" autocomplete="off">
+                <button type="submit" class="btn-convert" id="submitBtn">Compute Area</button>
+            </div>
+        </div>
+    </form>
 </div>
+
+<script>
+    (function () {
+        const input = document.getElementById('radius');
+        const circle = document.getElementById('geoCircle');
+        const radiusLine = document.getElementById('geoRadiusLine');
+        const radiusText = document.getElementById('geoRadiusText');
+        const eqDisplay = document.getElementById('equationDisplay');
+        const card = document.getElementById('circleCanvasCard');
+        const form = document.getElementById('circleForm');
+
+        const cx = 150;
+        const cy = 95;
+
+        function updateGeometry(val) {
+            const num = parseFloat(val);
+            if (!isNaN(num) && num > 0) {
+                const svgR = Math.min(72, Math.max(26, 26 + (Math.sqrt(num) * 14)));
+                const x2 = cx + svgR;
+                const textX = cx + (svgR / 2);
+
+                if (circle) circle.setAttribute('r', svgR);
+                if (radiusLine) radiusLine.setAttribute('x2', x2);
+                if (radiusText) {
+                    radiusText.setAttribute('x', textX);
+                    radiusText.textContent = 'r';
+                }
+
+                const computedArea = Math.PI * num * num;
+                const formattedArea = (Math.round(computedArea * 10000) / 10000);
+
+                if (eqDisplay) {
+                    eqDisplay.innerHTML = 'A = &pi; &times; (' + num + ')&sup2; = <strong class="equation-result">' + formattedArea + '</strong>';
+                }
+                if (card) {
+                    card.classList.add('is-calculated');
+                }
+            } else {
+                if (circle) circle.setAttribute('r', 50);
+                if (radiusLine) radiusLine.setAttribute('x2', 200);
+                if (radiusText) {
+                    radiusText.setAttribute('x', 175);
+                    radiusText.textContent = 'r';
+                }
+                if (eqDisplay) {
+                    eqDisplay.innerHTML = 'A = &pi; &times; r&sup2;';
+                }
+                if (card) {
+                    card.classList.remove('is-calculated');
+                }
+            }
+        }
+
+        if (input) {
+            input.addEventListener('input', function () {
+                updateGeometry(this.value);
+            });
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    updateGeometry(this.value);
+                }
+            });
+        }
+
+        if (form) {
+            form.addEventListener('submit', function () {
+                if (input) updateGeometry(input.value);
+            });
+        }
+
+        if (input && input.value) {
+            updateGeometry(input.value);
+        }
+    })();
+</script>
 {% endblock %}
